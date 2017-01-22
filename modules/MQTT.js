@@ -6,7 +6,9 @@ Simple MQTT protocol wrapper for Espruino sockets.
 /** 'private' costants */
 var C = {
   PACKET_ID      : 1, // Bad...fixed packet id
-  PROTOCOL_LEVEL : 4  // MQTT protocol level
+  PROTOCOL_LEVEL : 4,  // MQTT protocol level
+  DEF_PORT        : 1883, // MQTT default server port
+  DEF_KEEP_ALIVE  : 60,   // Default keep_alive (s)
 };
 
 /** Control packet types */
@@ -40,19 +42,19 @@ var RETURN_CODES = {
   NOT_AUTHORIZED                : 5
 };
 
-/** MQTT constructor */ 
+/** MQTT constructor */
 function MQTT(server, options) {
   this.server = server;
   var options = options || {};
-  this.port = options.port || this.C.DEF_PORT;
+  this.port = options.port || C.DEF_PORT;
   this.client_id = options.client_id || mqttUid();
-  this.keep_alive = options.keep_alive || this.C.DEF_KEEP_ALIVE;
+  this.keep_alive = options.keep_alive || C.DEF_KEEP_ALIVE;
   this.clean_session = options.clean_session || true;
   this.username = options.username;
   this.password = options.password;
   this.client = false;
   this.connected = false;
-  this.ping_interval = 
+  this.ping_interval =
     this.keep_alive < this.C.PING_INTERVAL ? (this.keep_alive - 5) : this.C.PING_INTERVAL;
   this.protocol_name = options.protocol_name || "MQTT";
   this.protocol_level = createEscapedHex( options.protocol_level || C.PROTOCOL_LEVEL );
@@ -61,9 +63,7 @@ function MQTT(server, options) {
 /** 'public' constants here */
 MQTT.prototype.C = {
   DEF_QOS         : 0,    // Default QOS level
-  DEF_PORT        : 1883, // MQTT default server port
-  DEF_KEEP_ALIVE  : 60,   // Default keep_alive (s)
-  CONNECT_TIMEOUT : 5000, // Time (s) to wait for CONNACK 
+  CONNECT_TIMEOUT : 5000, // Time (s) to wait for CONNACK
   PING_INTERVAL   : 40    // Server ping interval (s)
 };
 
@@ -178,7 +178,7 @@ MQTT.prototype.connect = function(client) {
       // console.log("Pinging MQTT server");
       mqo.ping();
     }, mqo.ping_interval*1000);
-    
+
     // Incoming data
     client.on('data', function(data) {
       var type = data.charCodeAt(0) >> 4;
@@ -224,7 +224,7 @@ MQTT.prototype.connect = function(client) {
                   break;
               case RETURN_CODES.SERVER_UNAVAILABLE:
                   mqttError += "server unavailable.";
-                  break;                  
+                  break;
               case RETURN_CODES.BAD_USER_NAME_OR_PASSWORD:
                   mqttError += "bad user name or password.";
                   break;
@@ -245,12 +245,16 @@ MQTT.prototype.connect = function(client) {
     });
 
     client.on('end', function() {
-      console.log('MQTT client disconnected');
-      clearInterval(mqo.pintr);
-      mqo.emit('disconnected');
-      mqo.emit('close');
+      if (mqo.connected) {
+        mqo.connected = false;
+        console.log('MQTT client disconnected');
+        if (mqo.pintr) clearInterval(mqo.pintr);
+        mqo.pintr = undefined;
+        mqo.emit('disconnected');
+        mqo.emit('close');
+      }
     });
-    
+
     mqo.client = client;
   };
   if (client) { onConnect(); }
@@ -261,7 +265,7 @@ MQTT.prototype.connect = function(client) {
 };
 
 /** Disconnect from server */
-MQTT.prototype.disconnect = function(topic, message) {
+MQTT.prototype.disconnect = function() {
   this.client.write(fromCharCode(TYPE.DISCONNECT<<4)+"\x00");
   this.client.end();
   this.client = false;
@@ -271,7 +275,7 @@ MQTT.prototype.disconnect = function(topic, message) {
 /** Publish message using specified topic */
 MQTT.prototype.publish = function(topic, message, qos) {
   var _qos = qos || this.C.DEF_QOS;
-  this.client.write(mqttPublish(topic, message, _qos));
+  this.client.write(mqttPublish(topic, message.toString(), _qos));
 };
 
 /** Subscribe to topic (filter) */
@@ -300,12 +304,12 @@ MQTT.prototype.subscribe = function(topics, opts, callback) {
         });
       });
   }
-  
+
   subs.forEach(function(sub){
     // TODO: Multiple topics in single subscribe packet
     this.client.write(mqttSubscribe(sub.topic, sub.qos));
   }.bind(this));
-  
+
   if ('function' === typeof callback) { callback(); }
 };
 
@@ -321,18 +325,18 @@ MQTT.prototype.ping = function() {
 
 /* Packet specific functions *******************/
 
-/** Create connection flags 
+/** Create connection flags
 
 */
 MQTT.prototype.createFlagsForConnection = function( options ){
   var flags = 0;
-  flags |= ( this.username )? 0x80 : 0; 
-  flags |= ( this.username && this.password )? 0x40 : 0; 
+  flags |= ( this.username )? 0x80 : 0;
+  flags |= ( this.username && this.password )? 0x40 : 0;
   flags |= ( options.clean_session )? 0x02 : 0;
   return createEscapedHex( flags );
 };
 
-/** CONNECT control packet 
+/** CONNECT control packet
     Clean Session and Userid/Password are currently only supported
     connect flag. Wills are not
     currently supported.
@@ -346,7 +350,7 @@ MQTT.prototype.mqttConnect = function(clean) {
   var keep_alive = fromCharCode(this.keep_alive>>8, this.keep_alive&255);
 
   /* payload */
-  var payload = mqttStr(this.client_id); 
+  var payload = mqttStr(this.client_id);
   if( this.username ){
     payload += mqttStr( this.username );
     if( this.password ){
@@ -354,7 +358,7 @@ MQTT.prototype.mqttConnect = function(clean) {
     }
   }
 
-  return mqttPacket(cmd, 
+  return mqttPacket(cmd,
            mqttStr( this.protocol_name )/*protocol name*/+
            this.protocol_level /*protocol level*/+
            flags+

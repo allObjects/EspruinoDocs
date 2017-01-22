@@ -20,7 +20,8 @@
       protocolVersion: 13,
       protocol : "echo-protocol", // optional websocket protocol
       origin: 'Espruino',
-      keepAlive: 60  // Ping Interval in seconds.
+      keepAlive: 60,  // Ping Interval in seconds.
+      headers:{ some:'header', 'another-header':42 } // optional websocket headers
     });
 
  ws.on('open', function() {
@@ -80,12 +81,13 @@ function WebSocket(host, options) {
   this.protocolVersion = options.protocolVersion || 13;
   this.origin = options.origin || 'Espruino';
   this.keepAlive = options.keepAlive * 1000 || 60000;
-  this.masking = options.masking || true;
+  this.masking = options.masking!==undefined ? options.masking : true;
   this.path = options.path || "/";
   this.protocol = options.protocol;
   this.lastData = "";
   this.key = buildKey();
-  this.connected = false;
+  this.connected = false || options.connected;
+  this.headers = options.headers || {};
 }
 
 WebSocket.prototype.initializeConnection = function () {
@@ -193,6 +195,12 @@ WebSocket.prototype.handshake = function () {
   ];
   if (this.protocol)
     socketHeader.push("Sec-WebSocket-Protocol: "+this.protocol);
+  
+  for(var key in this.headers) {
+    if (this.headers.hasOwnProperty(key))
+      socketHeader.push(key+": "+this.headers[key]);
+  }
+ 
   this.socket.write(socketHeader.join("\r\n")+"\r\n\r\n");
 };
 
@@ -250,9 +258,8 @@ exports.createServer = function(callback, wscallback) {
           'Sec-WebSocket-Accept': accept,
           'Sec-WebSocket-Protocol': req.headers["Sec-WebSocket-Protocol"]
       });
-      res.write(""); /** Completes the webSocket handshake on pre-1v85 builds **/
 
-      var ws = new WebSocket(undefined, {});
+      var ws = new WebSocket(undefined, { masking : false, connected : true });
       ws.socket = res;
       req.on('data', ws.parseData.bind(ws) );
       req.on('close', function() {
