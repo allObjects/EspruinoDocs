@@ -2,8 +2,9 @@
 Other Boards
 ============
 
-* KEYWORDS: Nucleo,Discovery,Maple,Olimexino,Leaflabs,Arduino
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Other+Boards. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
 
+* KEYWORDS: Nucleo,Discovery,Maple,Olimexino,Leaflabs,Arduino
 
 These are other boards that Espruino compiles for, but which aren't 'officially supported'. This means:
 
@@ -13,31 +14,56 @@ These are other boards that Espruino compiles for, but which aren't 'officially 
 *   The modules, tutorials and examples are designed for the Espruino Board and may not work
 *   The Web IDE may have to employ 'throttling' for error free communications - significantly slowing down your experience.
 *   You cannot update the firmware for other boards via the Web IDE
-*   We're not able to support you if you have problems using these boards. If you want support, get an [official board](/EspruinoBoard)
+*   We're not able to support you if you have problems using these boards. If you want support, get an [official board](/Order)
 *   The community is responsible for maintaining these boards, and as such releases are not subject to the same level of testing.
 
 **Note:** ST Nucleo and Discovery boards are sold at a low price, for evaluation purposes only. According to the [Evaluation products license agreement](http://www.st.com/st-web-ui/static/active/en/resource/legal/legal_agreement/license_agreement/EvaluationProductLicenseAgreement.pdf) that comes with each board, you must **not use them as part of a finished product**. If you want to do that, please check out our [official boards](/Order).
 
 To see how to get started with the [official boards](/Order), just follow our [Quick Start](/Quick+Start) guide, or you can [Order one here](/Order).
 
-## BOARDS that Espruino works on
+Contents
+--------
 
- |      | **Chip** | **Speed** | **Vars** | **Cost** | **USB** | **UARTs** | **SPIs** | **Bat** | **Arduino Headers** | **SD Card** | **Other** |
- |------|----------|-----------|----------|----------|---------|-----------|----------|---------|---------------------|-------------|-----------|
- | [**STM32VLDISCOVERY**](/ReferenceSTM32VLDISCOVERY) | STM32F100 | 24Mhz | 250 | €12 | N | 3 | 2 | N | N | N | |
- | [**STM32F3DISCOVERY**](/ReferenceSTM32F3DISCOVERY) | STM32F303 | 72Mhz | 2800 | €14 | Y | 3 | 2 | N | N | N | |
- | [**STM32F4DISCOVERY**](/ReferenceSTM32F4DISCOVERY) | STM32F407 | 168Mhz | 5000 | €16 | Y | 6 | 3 | N | N | N | |
- | **[ST NUCLEO-F401RE](/ReferenceNUCLEOF401RE)** | STM32F401 | 84Mhz | 5300 | €12 | N | 3 | 4 | N | Y | N | |
- | **[ST NUCLEO-F411RE](/ReferenceNUCLEOF411RE)** | STM32F411 | 84Mhz | 5300 | €12 | N | 3 | 4 | N | Y | N | |
- | [**OLIMEXINO-STM32**](/ReferenceOLIMEXINO_STM32) | STM32F103RB | 72Mhz | 700 | €20 | Y | 3 | 2 | LiPo | Y | Y | |
- | [**LeafLabs Maple RBT6**](/ReferenceOLIMEXINO_STM32) | STM32F103RB | 72Mhz | 700 | €40 | Y | 3 | 2 | LiPo | Y | N | |
- | [**'HY' 2.4" LCD **](/ReferenceHYSTM32_24) | STM32F103VE | 72Mhz | 2800 | €30 | Y | 3 | 2 | N | N | Y | |
- | [**'HY' 2.8" LCD**](/ReferenceHYSTM32_28) | STM32F103RB | 72Mhz | 700 | €30 | Y | 3 | 2 | N | N | U | |
- | [**'HY' 3.2" LCD**](/ReferenceHYSTM32_32) | STM32F103VC | 72Mhz | 2000 | €30 | Y | 3 | 2 | N | N | Y | |
- | [**ESP8266**](/EspruinoESP8266) | Xtensa | 80Mhz | 1023 | €10 | N | 1 | 1 | N | N | N | WiFi |
- | [**micro:bit**](/MicroBit) | nRF51822 | 16Mhz | 200 | - | Y | 1 | 1 | Y | N | N | Bluetooth LE, LED matrix |
+* APPEND_TOC
 
-**Key:** `Y`=Yes, `N`=No, `U`=Yes, but currently unimplemented
+## Boards that Espruino works on
+
+ |      | **Chip** | **Speed**<br>MHz | **Vars** | **Cost** | **USB** | **UART** | **SPI** | **Bat** | **Other** |
+ |------|----------|-----------|----------|----------|---------|-----------|----------|---------|-----------|
+  | **Official Boards** |  |  |  |  |  |  |  |  |  |
+ | [**Espruino Original**](/Original) | STM32F104 | 72 | 2200 | £21 | Y | 3 | 2 | Y | Micro SD, Optional Bluetooth Serial, Proto area |
+ | [**Espruino Pico**](/Pico) | STM32F401 | 84 | 5100 | £17 | Y | 3 | 2 | Y |  |
+ | [**Espruino WiFi**](/WiFi) | STM32F411 | 100 | 7100 | £25 | Y | 3 | 2 | N |  WiFi |
+ | [**Espruino Puck.js**](/Puck.js) | nRF52832 | 64 | 2200 | £25 | N | 1 | 1 | Y |  Bluetooth LE, Case with Button |
+ | [**Espruino Pixl.js**](/Pixl.js) | nRF52832 | 64 | 2200 | £30 | N | 1 | 1 | Y | Arduino Headers, Bluetooth LE, LCD Display |
+ | [**Espruino MDBT42Q Breakout**](/MDBT42Q) | nRF52832 | 64 | 2200 | £17 | N | 1 | 1 | N | Bluetooth LE |
+ | [**Espruino MDBT42Q Module**](/MDBT42Q) | nRF52832 | 64 | 2200 | £10 | N | 1 | 1 | N | Bluetooth LE, Bare Module |
+ | **Third Party Boards** |  |  |  |  |  |  |  |  |  |
+ | [**Ruuvitag**](/Ruuvitag) | nRF52832 | 64 | 2000 | $28 | N | 1 | 1 | Y | Bluetooth LE, Environment sensors |
+ | [**Seeed Wio LTE**](/WioLTE) | STM32F405 | 168 | 5450 | $25 | Y | 6 | 3 | Y | Micro SD, LTE |
+ | [**Nordic Thingy:52**](/Thingy52) | nRF52832 | 64 | 2000 | $40 | N | 1 | 1 | Y | Environment & 9 Axis sensors, Mic and Speaker |
+ | [**nRF52832DK DK**](/nRF52832DK) | nRF52832 | 64 | 2000 | $40 | N | 1 | 1 | Y | Arduino Headers |
+ | [**STM32L496GDISCOVERY**](/STM32L496GDISCOVERY) | STM32L496AGI6 | 168 | 19200 | $70 | Y | 3 | 4 | N | Arduino Headers, Micro SD, Optional LTE/GSM modules |
+ | [**iTracker RAK8211**](/RAK8211) | nRF52832 | 64 | 2000 | $82 | N | 1 | 1 | Y | GPS, GPRS, LTE or NB-IoT |
+ | [**iTracker RAK8212**](/RAK8212) | nRF52832 | 64 | 2000 | $88 | N | 1 | 1 | Y | GPS, GPRS, LTE, NB-IoT |
+ | **Other Boards** |  |  |  |  |  |  |  |  |  |
+ | [**STM32VLDISCOVERY**](/ReferenceSTM32VLDISCOVERY) | STM32F100 | 24 | 250 | €12 | N | 3 | 2 | N | |
+ | [**STM32F3DISCOVERY**](/ReferenceSTM32F3DISCOVERY) | STM32F303 | 72 | 2800 | €14 | Y | 3 | 2 | N | |
+ | [**STM32F4DISCOVERY**](/ReferenceSTM32F4DISCOVERY) | STM32F407 | 168 | 5000 | €16 | Y | 6 | 3 | N | |
+ | [**ST NUCLEO-F401RE**](/ReferenceNUCLEOF401RE) | STM32F401 | 84 | 5300 | €12 | N | 3 | 4 | N | Arduino Headers |
+ | [**ST NUCLEO-F411RE**](/ReferenceNUCLEOF411RE) | STM32F411 | 84 | 5300 | €12 | N | 3 | 4 | N | Arduino Headers |
+ | [**OLIMEXINO-STM32**](/ReferenceOLIMEXINO_STM32) | STM32F103RB | 72 | 700 | €20 | Y | 3 | 2 | LiPo | Arduino Headers, Micro SD |
+ | [**LeafLabs Maple RBT6**](/ReferenceOLIMEXINO_STM32) | STM32F103RB | 72 | 700 | €40 | Y | 3 | 2 | LiPo | Arduino Headers |
+ | [**'HY' 2.4" LCD **](/ReferenceHYSTM32_24) | STM32F103VE | 72 | 2800 | €30 | Y | 3 | 2 | N | SD Card, LCD Display |
+ | [**'HY' 2.8" LCD**](/ReferenceHYSTM32_28) | STM32F103RB | 72 | 700 | €30 | Y | 3 | 2 | N | SD Card (unsupported),LCD Display |
+ | [**'HY' 3.2" LCD**](/ReferenceHYSTM32_32) | STM32F103VC | 72 | 2000 | €30 | Y | 3 | 2 | N | SD Card, LCD Display |
+ | [**micro:bit**](/MicroBit) | nRF51822 | 16 | 200 | - | Y | 1 | 1 | Y | Bluetooth LE, LED matrix |
+ | [**ESP8266**](/EspruinoESP8266) | Xtensa | 80 | 1023 | €10 | N | 1 | 1 | N | WiFi |
+ | [**ESP32**](/ESP32) | Xtensa | 240 | 5000 | $10 | N | 2 | 2 | N | Flash FS, WiFi |
+
+**Key:** `Y`=Yes, `N`=No
+
+**Note:** Third party boards are designed, sold and supported by companies who help to support Espruino's continued development. They may or may not come with Espruino pre-installed, however we ensure that [up to date firmware for these boards is available](/Download) so you always have access to the newest features.
 
 You can also see these boards listed with thumbnails at the top of [the reference page](/Reference).
 
@@ -170,7 +196,7 @@ The 'HY' boards have a USB-RS232 converter onboard, so to flash them, you can us
 *   Plug USB into the RS232 converter port of the board. Note that Prolific has decided not to provide drivers for older versions of their PL2303 chips on Windows 7 and later, so on some boards that use this chip, you may have problems.
     *   On 2.4" board this is the bottom connector (near the power LED)
     *   On other boards, with the buttons at the bottom of the board, this is the connector on the top left
-*   Follow our [Serial Bootloader](/Serial+Bootloader) instructions - use the file espruino_..._hystm32_XX_YY.bin where XX is the size of the LCD screen (24=2.4, etc) and YY is the two letters from the chip name after F103 (STM32F103VCT6 = VC)
+*   Follow our [Serial Bootloader](/Serial+Bootloader) instructions - use the file `espruino_..._hystm32_XX_YY.bin` where XX is the size of the LCD screen (24=2.4, etc) and YY is the two letters from the chip name after F103 (STM32F103VCT6 = VC)
 *   On the 2.4" board, move the 'BOOT0' jumper back to 0
 *   Press Reset, and Espruino will load.
 *   If connecting to the RS232 converter port of the board, you'll need to connect at 9600 baud.
@@ -213,3 +239,19 @@ Please see [the ESP8266 page](/EspruinoESP8266) for more information.
 ### BBC Micro:bit
 
 Please see [the Micro:bit page](/MicroBit) for more information.
+
+### ESP32
+
+Please see [the ESP32 page](/ESP32) for more information.
+
+
+Third Party Boards
+-------------------------
+
+* APPEND_KEYWORD: Third Party Board
+
+
+Official Espruino Boards
+-------------------------
+
+* APPEND_KEYWORD: Official Board

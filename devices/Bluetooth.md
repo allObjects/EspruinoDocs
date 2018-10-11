@@ -2,7 +2,12 @@
 Bluetooth
 =========
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Bluetooth. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Bluetooth,Wireless,BT,HC-05,HC05,Built-In,Radio,Transceiver
+
+**Note:** This page covers adding Bluetooth on the [Original Espruino Board](/Original).
+We now [sell Espruino devices](https://shop.espruino.com/ble) with Bluetooth LE capability pre-installed.
 
 ![HC-05 front](Bluetooth/HC05_front.jpg)
 ![HC-05 back](Bluetooth/HC05_back.jpg)
@@ -16,7 +21,7 @@ Connecting
 
 [[http://youtu.be/J0HJVTDNSUQ]]
 
-The [Espruino Board](/EspruinoBoard) has pads on it already for the placement of an HC-05 Bluetooth module, so it's very easy to connect. Note that while there are many connections on the HC-05 module, only 4 of them are needed. 
+The [Espruino Board](/Original) has pads on it already for the placement of an HC-05 Bluetooth module, so it's very easy to connect. Note that while there are many connections on the HC-05 module, only 4 of them are needed.
 
 For the Espruino [[Pico]], there is [an adaptor shim available](/Shims#bluetooth-0-1-adaptor) that makes connecting Bluetooth a lot easier!
 
@@ -92,7 +97,7 @@ Then:
 
 8. It should now be available to pair under the new name `Espruino1` and passkey `1701`!
 
-Using 
+Using
 -----
 
 * APPEND_USES: Bluetooth
@@ -100,4 +105,4 @@ Using
 Buying
 -----
 
-HC05 Bluetooth modules can be purchased from many places. If you wish to buy from eBay, make sure you get one **without** the 0.1" adaptor PCB included if you want to connect it to the [Espruino Board](/EspruinoBoard) ([eBay search](http://www.ebay.com/sch/i.html?_nkw=HC05+bluetooth) - around $6)
+HC05 Bluetooth modules can be purchased from many places. If you wish to buy from eBay, make sure you get one **without** the 0.1" adaptor PCB included if you want to connect it to the [Espruino Board](/Original) ([eBay search](http://www.ebay.com/sch/i.html?_nkw=HC05+bluetooth) - around $6)

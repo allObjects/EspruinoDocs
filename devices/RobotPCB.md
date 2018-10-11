@@ -2,6 +2,8 @@
 Espruino Pico Robot PCB
 ====================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/RobotPCB. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 ![Robot PCB](RobotPCB/robot.jpg)
 
 This is a simple PCB that allows you to make a robot with the Espruino Pico. The robot has:
@@ -86,7 +88,7 @@ On the current board (the one with no version number):
 * GND on C1 isn't connected, and if C1 is used it'll need shorting to C2 next to it.
 * JP5 (the breakout for the side of the Pico with `Bat,B15,B14,B13,B10,B1,A7,A6,A5` on it is **backwards**
 * The markings for the LEDs are **wrong**. The flat side of the LED should be **opposite** the board's flat side marking.
-* A10 should be connected to the Optical sensor's CS pin - a wire needs adding. 
+* A10 should be connected to the Optical sensor's CS pin - a wire needs adding.
 * B4 and B5 (MISO and MOSI) are mixed up, meaning you must use software SPI instead of hardware SPI
 
 Assembly
@@ -102,7 +104,7 @@ Once done, use a multimeter meter and quickly check that done of the pad are sho
 
 ![pico soldered](RobotPCB/picosoldered.jpg)
 
-Solder on the surface mount resistors and capacitors as shown in the parts list. The only two parts not marked on the PCB are C1 and C2 by the Pico (they're shown in black above). 
+Solder on the surface mount resistors and capacitors as shown in the parts list. The only two parts not marked on the PCB are C1 and C2 by the Pico (they're shown in black above).
 
 **Note:** The current board has a problem where C1's GND connection is not made, so if C1 is used you must connect C1's GND to C2's GND.
 
@@ -149,8 +151,8 @@ var SONICL = require("HC-SR04").connect(SONICL_TRIG, SONICL_ECHO, function(dist)
 var SONICR = require("HC-SR04").connect(SONICR_TRIG, SONICR_ECHO, function(dist) {
   console.log("right "+dist+" cm away");
 });
-//SONICL.trigger(); 
-//SONICR.trigger(); 
+//SONICL.trigger();
+//SONICR.trigger();
 
 // Optical sensor
 var sensorSPI = new SPI();
@@ -168,18 +170,15 @@ var sensor = require("ADNS5050").connect(sensorSPI,A10);
 /*Serial2.setup(9600, { rx: A3, tx : A2 });
 var wifi = require("ESP8266WiFi").connect(Serial2, function(err) {
   if (err) throw err;
-  wifi.reset(function(err) {
+  console.log("Connecting to WiFi");
+  wifi.connect("WiFi_Name","WPA2_Key", function(err) {
     if (err) throw err;
-    console.log("Connecting to WiFi");
-    wifi.connect("WiFi_Name","WPA2_Key", function(err) {
-      if (err) throw err;
-      console.log("Connected");
-      // Now you can do something, like an HTTP request
-      require("http").get("http://www.pur3.co.uk/hello.txt", function(res) {
-        console.log("Response: ",res);
-        res.on('data', function(d) {
-          console.log("--->"+d);
-        });
+    console.log("Connected");
+    // Now you can do something, like an HTTP request
+    require("http").get("http://www.pur3.co.uk/hello.txt", function(res) {
+      console.log("Response: ",res);
+      res.on('data', function(d) {
+        console.log("--->"+d);
       });
     });
   });

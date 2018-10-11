@@ -2,6 +2,8 @@
 Dial Tones
 =========
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Dial+Tones. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: DTMF,Dial tone,Beep,Buzz
 * USES: KeyPad,Espruino Board,Speaker,Only Espruino Board,PWM
 
@@ -26,7 +28,7 @@ Espruino can't output two tones at once, but it can output one tone on each pin.
 You'll Need
 ----------
 
-* An [Espruino Board](/EspruinoBoard) 
+* An [Espruino Board](/Original) 
 * A [[KeyPad]] (not required - see the last part of the tutorial)
 * A [[Speaker]]
 

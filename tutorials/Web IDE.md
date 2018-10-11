@@ -2,10 +2,12 @@
 Espruino Web IDE
 =================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Web+IDE. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Web IDE,Editor,IDE,Install
 * USES: Espruino Board,Puck.js,Espruino Pico,Pico,Espruino WiFi
 
-The Web IDE is the preferred way to program Espruino. It's got a syntax-highlighted editor as well as support for dynamically loading modules and for upgrading Espruino's Firmware.
+The Web IDE is the preferred way to program Espruino. It's got a syntax-highlighted editor as well as support for dynamically loading modules and for upgrading Espruino's Firmware. You might want to check out [other ways of programming Espruino devices](/Programming).
 
 Installing
 ----------
@@ -18,9 +20,9 @@ This video is from the [[Quick Start]] page, which contains extra information on
 
 [[http://youtu.be/32mewNGxax4]]
 
-**Note:** As of December 2016, the Windows version of the Web IDE from the Chrome Web Store doesn't
-support Bluetooth Low Energy, needed for communicating with Puck.js. If you're using Windows
-you'll need to use the Native Application (below).
+**Note:** On Windows, the Web IDE from the Chrome Web Store doesn't
+support Bluetooth Low Energy, needed for communicating with Bluetooth LE
+Espruino device. If you're using Windows you'll need to use the Native Application (below).
 
 ### Online
 
@@ -31,6 +33,8 @@ Just follow [this link to the Online Web IDE](https://www.espruino.com/ide)
 
 **Note:**
 
+* Windows doesn't fully support Web Bluetooth yet, so this won't work. You'll
+need to install the Native application (below).
 * Due to security restrictions, the online Web IDE can't access USB
 devices, so you'll be unable to use it with USB Espruino boards (you need the
 Native or Web Store versions).
@@ -40,9 +44,12 @@ on how to enable it.
 
 ### As a Native application
 
-The Web IDE is available as a download for 64 bit Windows:
+The Web IDE is available as:
 
-* [Download for Windows x64 - 0.65.9](/files/espruino_ide_win64_0v65.9.exe)
+* [Download for Windows 32 bit - 0.70.4](/files/espruino_ide_win32_0v70.4.exe)
+* [Download for Windows 64 bit - 0.70.4](/files/espruino_ide_win64_0v70.4.exe)
+
+Older versions of the IDE (not recommended) [are available here](http://www.espruino.com/files/)
 
 #### For Windows 8.1 and later
 
@@ -69,6 +76,12 @@ you should see a list of connectable BLE devices.
 
 If you require a native version of the IDE for other platforms, you can install
 the Development version from GitHub (below):
+
+### Locally hosted version
+
+If you have a Raspberry Pi, you can install the [EspruinoHub](https://github.com/espruino/EspruinoHub)
+software on it, which will allow you to program any Bluetooth LE Espruino devices within range
+of the Pi straight from a Web Browser on any network-connected computer.
 
 ### Development version
 

@@ -1,26 +1,32 @@
-<!--- Copyright (c) 2013 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. -->
+<!--- Copyright (c) 2018 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. -->
 Troubleshooting
 =============
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Troubleshooting. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Troubleshooting,Trouble,Problems,Help,Broken,Not Working
 
-What follows is a quick list of potential problems and solutions. If your problem isn't covered here, please post in the [Forum](http://forum.espruino.com). If you have a problem that is not listed here and find a solution, please [[Contact Us]] and we'll add it here.
+What follows is a quick list of potential problems and solutions. If your problem isn't covered here, please post in the [Forum](http://forum.espruino.com).
 
-**Do you have a [Puck.js](/Puck.js)?** Check out the [Puck specific troubleshooting page](/Puck.js#troubleshooting)
+**Do you have a Bluetooth LE device like [Puck.js](/Puck.js) or [Pixl.js](/Pixl.js)?** Check out the [Bluetooth specific troubleshooting page](/Troubleshooting+BLE)
+
+* APPEND_TOC
 
 Getting Started
-=============
+===============
 
 ## My board doesn't seem to be recognized by my computer
 
 ### On the Espruino Pico/WiFi Boards
 
-Hold down the button, and then plug the board in while keeping it held (then release):
+Hold down the button, and then plug the board in while keeping it held (then release after connecting):
 
-* **If the Red and Green LEDs lit brightly for a fraction of a second, then they start 'pulsing'** everything is fine - you're now in bootloader mode
-* **If the Red LED flashes briefly when plugging in**, the button wasn't pressed, or isn't working.
+* **If Red and Green light brightly for a fraction of a second, then they start 'pulsing'** everything is fine - you're now in bootloader mode
+* **If Red flashes briefly when plugging in**, the button wasn't pressed, or isn't working.
 * **If nothing lights up at all**, there is a bad USB cable/connection, so no power
-* **If the Red and Green LEDs stay lit brightly** the bootloader has started, but no USB connection could be made. This could be due to a bad cable (try plugging the board in directly), or if that doesn't work it could be drivers - see the next troubleshooting headings.
+* **If Red and Green stay lit brightly** the bootloader has started, but no USB connection could be made. This could be due to a bad cable (try plugging the board in directly), or if that doesn't work it could be drivers - see the next troubleshooting headings.
+* **Green lights for a second, then red flashes and both go out** - the board has booted into Espruino without loading saved code. This happens when the button is held down for >2 secs after booting. To enter the bootloader, you need to release the button less than a second after applying power.
+
 
 ### On the Original Espruino Board
 
@@ -28,7 +34,7 @@ Hold down the RST button. Do the blue and red lights glow dimly? If not, there's
 
 Hold down BTN1, and then press and release RST while keeping BTN1 held. The Blue and Red LEDs should now light brightly for a fraction of a second, and the Blue LED should be pulsing. If not, there is some issue with USB. Try another USB cable (it's surprising how often this is at fault, *even if it works for other devices*) and if that doesn't work, see the next troubleshooting headings.
 
-### On Puck.js
+### On a Bluetooth LE device
 
 Check out the [Puck.js troubleshooting page](/Puck.js#troubleshooting)
 
@@ -64,6 +70,12 @@ In order to stop this happening in the future, click 'Disconnect' before resetti
 
 See above.
 
+## I can't get my board into bootloader mode
+
+On official Espruino boards you enter bootloader mode by holding the button held down while resetting or powering them up.
+
+On any of the newer boards (WiFi, Puck.js, etc) holding the button down for longer than a second or two at boot will cause the board to exit the bootloader and enter Espruino without loading any of the code that you might have saved to Flash memory (to allow you to easily recover if you wrote code that you didn't intend to). As a result, to enter the bootloader you need to make sure that you release the button as soon after applying power (or resetting) as you can.
+
 
 ## I tried to reflash my Espruino Board, and now it won't work
 
@@ -79,10 +91,10 @@ As Espruino itself won't work, the IDE won't know what type of board it is suppo
 
 ## My board appears as a mouse or joystick in Windows Control Panel's 'Devices and Printers' page.
 
-This may happen if you are using an ST Discovery board and haven't yet installed the Espuino firmware. Some of these boards are automatically recognized by Windows as a completely different kind of device (because of the 'demo software' that comes installed). Install the firmware as described on the Download page, disconnect the board a reconnect it again. 
+This may happen if you are using an ST Discovery board and haven't yet installed the Espuino firmware. Some of these boards are automatically recognized by Windows as a completely different kind of device (because of the 'demo software' that comes installed). Install the firmware as described on the Download page, disconnect the board a reconnect it again.
 
 Using Espruino
-============
+==============
 
 
 ## I just upgraded Espruino to the latest version, and now I'm getting `ReferenceError` messages
@@ -169,6 +181,10 @@ If you get pulsing Red/Green LEDs, it's because you actually pressed the button 
 
 If you get a glowing blue LED, it's because you pressed **BTN1** too quickly after pressing **RST**. Try again and leave a bit more of a gap.
 
+### Puck.js
+
+See [the instructions on the Puck.js page](/Puck.js#i-saved-some-code-and-my-puck-js-no-longer-works)
+
 ### Finally
 
 This will make Espruino start without loading your saved code. You can then connect with the Web IDE and type `save()` to overwrite your saved program with the 'empty' state that Espruino is now in.
@@ -186,27 +202,72 @@ To enter normal mode, just:
 |-------|----|
 | Pico/WiFi | Unplug from USB and re-plug, without pressing the button. |
 | Espruino Board | Press and release **RST** while **BTN1** is not pressed. |
+| Puck.js | Remove and re-insert the battery |
+
+## When I upload code, some characters are being lost
+
+Most likely this is because you're uploading code that is doing calculations
+that are taking a long time to finish - and so Espruino is unable to process
+the data that is being received quickly enough.
+
+When you upload code to Espruino, it is executed as it is received (allowing
+you to upload more code than might otherwise fit into RAM).
+
+In many cases, you will actually want the code to run *at power on* rather
+than when you upload (eg. WiFi connection or LCD initialisation). In these
+cases you could put your code inside a function called `onInit`:
+
+```
+// variables
+// function declarations
+
+function onInit() {
+  // initialisation of hardware
+}
+
+// Call onInit right after upload (for testing)
+setTimeout(onInit, 1000);
+```
+
+When saving, you may then want to remove the `setTimeout` line,
+upload, and then save (unless you're sure that calling `onInit` twice
+will not cause problems). See [the page on Saving](/Saving) for more
+information.
 
 
 ## I typed `save()` but my connected device doesn't work at power on
 
 Some devices (such as LCDs and WiFi) require their own initialisation code which Espruino can't remember. To do that initialisation at boot time, write a function called `onInit` which contains the initialisation code for your device. After typing `save()`, it will be executed at power on or reset.
 
+See [the page on Saving](/Saving) for more information.
+
 
 ## I typed `save()` but Espruino won't work (or stops working quickly) when powered from a computer (it only works from a USB power supply, battery, or the computer when the Web IDE is running)
 
 This is because you're printing information to the console.
 
-When you are not connected to a computer via USB, Espruino writes any console data to the Serial port. However when you are connected to a computer, Espruino writes down USB. **If no terminal application is running on your computer**, it won't accept any incoming data down USB. When Espruino fills up its output buffer, it waits for the computer to accept the data rather than throwing it away, and this is what causes your program not to work.
+When you are not connected to a computer via USB, Espruino automatically moves the console (left-hand side of the IDE) to the Serial port. However when you are connected to a computer, Espruino writes down USB. **If no terminal application is running on your computer** then your computer won't accept any incoming data down USB, and Espruino can't tell whether that is because the IDE is connected but busy, or because no app is running at all. Espruino won't throw away any of the data that you send down USB, so when Espruino fills up its output buffer, it stops and waits for the computer to accept the data, and this is what causes your program not to work.
 
-To fix this, either remove your `console.log` and `print` statements, or explicitly set the console to be on the Serial port at startup with `function onInit() { Serial1.setConsole(); }`. However the second option will mean that you will no longer be able to program Espruino from USB unless you reset it.
+To fix this, either remove your `console.log` and `print` statements, or explicitly set the console to be on the Serial port at startup with `function onInit() { Serial1.setConsole(true); }`. However the second option will mean that you will no longer be able to program Espruino from USB unless you reset it or you code calls `USB.setConsole();` to move the console back.
+
+A second option is to use simply call `Serial1.setConsole();` (without `true` as an argument). This will move the console to Serial1 *until USB is connected again*. Running this from `onInit` may not work, since `onInit` will likely be called at startup *before the USB connection is made with your PC*. In that case, the console will move to `Serial1`, but just a fraction of a second later, USB will connect and the console will move to USB. Instead, you could do:
+
+```
+function onInit() {
+  setTimeout(function() { Serial1.setConsole(); }, 1000);
+  // ...
+}
+```
+
+This will call `setConsole` 1 second after boot, by which time USB should have initialised. Assuming your Espruino is battery powered, unplugging and replugging USB will then move the console back to USB, where the board can be programmed.
 
 
-## <a name="console"></a>Espruino works when connected to a computer, but stops when powered from something else
+<a name="console"></a>
+## Espruino works when connected to a computer, but stops when powered from something else
 
-Do you have a Serial device connected to pins `B6`/`B7` on the [Pico](/Pico) or [WiFi](/WiFi), or `A9`/`A10` on the [Original Espruino](/EspruinoBoard)? When disconnected from USB, Espruino's 'console' (what's on the left-hand side of the Web IDE) gets moved over to `Serial1` - which is on those pins. If you've got a Serial device on those pins then it won't work.
+Do you have a Serial device connected to pins `B6`/`B7` on the [Pico](/Pico) or [WiFi](/WiFi), or `A9`/`A10` on the [Original Espruino](/Original)? When disconnected from USB, Espruino's REPL/'console' (what's on the left-hand side of the Web IDE) gets moved over to `Serial1` - which is on those pins. If you've got a [Serial](/USART) device on those pins then it will then stop working.
 
-To fix this, right at the top of your code that runs on initialisation (eg. the `onInit` function or `E.on('init', ...)` event), add the line `USB.setConsole()`, which will force the console onto USB.
+To fix this, right at the top of your code that runs on initialisation (eg. the `onInit` function or `E.on('init', ...)` event), add the line `USB.setConsole()`, which will force the console onto USB. After `USB.setConsole()`, the console can still automatically move back to `Serial1` if there is some event that forces it (USB connect and disconnect), so you can *force* the console to stay on USB regardless with `USB.setConsole(true)` instead.
 
 Other reasons could be that the power supply you're using isn't supplying enougn current or is too low a voltage.
 
@@ -317,3 +378,11 @@ This is usually one of four reasons:
 * The device's address is incorrect - sometimes people quote the address as being twice as large as it actually is. If in doubt, try dividing the address by two or multiplying it by two.
 * The device isn't powered or ground isn't shared (see the point above)
 * The SDA and SCL wires are mixed up. SDA should be connected to SDA, and SCL to SCL.
+
+
+Something else is wrong!
+-------------------------
+
+Check out the [Espruino Forums](http://forum.espruino.com/)
+
+Is your device a Bluetooth device? Check out the [Bluetooth Troubleshooting page](/Troubleshooting+BLE)

@@ -2,6 +2,8 @@
 Flashing and using the ESP8266 with Espruino
 ============================================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/ESP8266_Flashing. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 This tutorial provides a little intro into getting going with the ESP8266 and Espruino, and then
 using it without serial wires going forward. For reference documentation about the esp8266 port
 of Espruino, please see the [reference section](/EspruinoESP8266).
@@ -177,6 +179,15 @@ The last "Flash map..." line tells you that I have my module configured for 4MBy
 and that the actual flash chip is from manufacturer 0xe0 and code 0x4016. You can look up most
 codes at http://code.coreboot.org/svn/flashrom/trunk/flashchips.h and Espruino will complain
 if the config doesn't match the chip for some common chips.
+
+Erase flash
+-----------
+
+It is important to erase the flash before upgrade to a new version to avoid undefined situations like can't load saved code or endless reboot loops..... 
+
+```
+$ /path/to/esptool/esptool.py --port /dev/ttyUSB0 --baud 115200 erase_flash
+```
 
 Configuring the Wifi
 --------------------

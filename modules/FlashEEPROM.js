@@ -16,6 +16,7 @@ function FlashEEPROM(addr, flash) {
   } else if (this.flash.getFree!==undefined) {
     var free = this.flash.getFree();
     if (free.length) this.addr = free[0].addr;
+    else throw "No free flash memory found";
   } else { 
     // TODO: remove this after 1v86 is released
     var mem = process.memory();
@@ -96,7 +97,7 @@ FlashEEPROM.prototype._write = function(n, addr, data) {
   this.flash.write(new Uint8Array([addr, data.length, data.length>>8, 0]), n);
   // write data
   n+=4;
-  if (data.length!=4) {
+  if (data.length & 3) {
     var d = new Uint8Array((data.length+3)&~3);
     d.set(data);
     data = d;

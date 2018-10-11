@@ -2,6 +2,8 @@
 Espruino on ESP8266 WiFi
 ========================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/EspruinoESP8266. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: ESP8266,ESP-12,ESP12,ESP01,ESP1,ESP-01,Espruino,Board,PCB,Pinout,Internet,WiFi,Wireless,Radio
 
 **Note:** *This page documents running the Espruino firmware on the ESP8266 board.
@@ -11,12 +13,19 @@ To find out how to connect an ESP8266 board to another Espruino board (as a Wifi
 **Warning:** Espruino on the ESP8266 defaults to 115200 baud on its serial interface. This means you
 will need to adjust this setting in the IDE if you use that. (Other Espruino ports default to 9600 baud.)
 
+Contents
+--------
+
+* APPEND_TOC
+
 Quick links
 -----------
-* [Forum thread with latest firmware](http://forum.espruino.com/conversations/279176/newest/)
-* [Flashing the esp8266 tutorial](/ESP8266_Flashing)
-* [Using the esp8266 with Wifi](/ESP8266_WifiUsage)
-* [Forum discussions about the esp8266 port](http://forum.espruino.com/microcosms/925/)
+
+* [Download the latest ESP8266 firmware release](http://www.espruino.com/Download)
+* [Download 'cutting edge' ESP8266 firmwares](http://www.espruino.com/binaries/travis/master/) - these may not always work
+* [Tutorial on flashing the esp8266](ESP8266_Flashing)<a name="firmware-updates"></a>
+* [Espruino ESP8266 Forum](http://forum.espruino.com/microcosms/925/)
+* [Using Wifi on the ESP8266](ESP8266_WifiUsage)
 * [Gitter chat about Espruino](https://gitter.im/espruino/Espruino) (not focused on esp8266 but
 lots of esp8266 chatter)
 
@@ -28,18 +37,30 @@ Features
 * 1 Analog input (0..1V)
 * None of the GPIO are 5 volt tolerant!
 * Built-in Wifi
-* 1023 JS variables
+* 1600 JS variables
+
+Build Content
+-------------
+
+content | espruino_1v98_esp8266 | espruino_1v98_esp8266_4mb
+ :---  | :--- | :---
+Modules | NET<br>TELNET<br><br>CRYPTO, only SHA1<br>NEOPIXEL | NET<br>TELNET<br>GRAPHICS<br>CRYPTO only SHA1<br>NEOPIXEL
+JS variables| 1700| 1600
+save pages| 4 x 4096 byte | 16 x 4096 byte
+getState()| {"sdkVersion": "2.0.0(5a875ba)",<br>"cpuFrequency": 160, "freeHeap": 10560, "maxCon": 10,<br>"flashMap": "512KB:256/256",<br>"flashKB": 512,<br>"flashChip": "0xXX 0x4013"}|{"sdkVersion": "2.0.0(5a875ba)",<br>"cpuFrequency": 160, "freeHeap": 11888, "maxCon": 10,<br>"flashMap": "4MB:1024/1024",<br>"flashKB": 4096,<br>"flashChip": "0xXX 0x4016"}|
+getFreeFlash()| n/a <br> use 'Storage' module to save data|[{ "addr": 2097152, "length": 1048576 },<br>{ "addr": 3145728, "length": 262144 },<br>{ "addr": 3407872, "length": 262144},<br>{ "addr": 3670016, "length": 262144 },<br>{ "addr": 3932160, "length": 262144 }]
+chip_id and flash_size|4013-4015 use<br>--flash_size 512KB<br>|4016-4018 use<br>--flash_size 4MB-c1
+max image size| 468 KB|812 KB
 
 Limitations
 -----------
 The following features are only partially or not supported by Espruino on the ESP8266:
 
 - No hardware [[I2C]], however, the software I2C works OK.
-- [[PWM]] does not work. Code exists but doesn't work.
+- [[PWM]] does not work, low speed software [[PWM]] is usable
 - No [[DAC]]: the esp8266 does not have a DAC.
 - No independently usable serial port (needs Espruino work)
-- **GPIO16 is not currently supported in Espruino, it is not a normal GPIO
-pin but rather is attached to the real-time-clock circuitry.**
+- **GPIO16 is now supported in Espruino as a D16 without watch but with all software functiontions like PWM/I2C/SPI/etc**
 
 The main limitations of Espruino on the esp8266 come from two factors:
 - The esp8266 does not have rich I/O peripheral interfaces, this means protocols need to be run in software, which not only may
@@ -64,6 +85,7 @@ A 500-600mA regulator with at least 22uF capacitor is recommended.</span>
 
 WiFi
 ----
+
 The ESP8266's Wifi implementation supports both a simple access point mode and a station mode.
 The station mode is highly recommended for normal operation as the access point mode is very
 limited. It supports 4 stations max and offers no routing between stations.
@@ -72,17 +94,25 @@ The default initial configuration is for an access point with an SSID like `ESP_
 up.
 
 Using the wifi is documented in the [Wifi library reference](http://www.espruino.com/Reference#Wifi).
-The "getting started 3-liner" is:
+The "getting started" is:
 ```
 var wifi = require("Wifi");
-wifi.connect("my-ssid", {password:"my-pwd"}, function(ap){ console.log("connected:", ap); });
-wifi.stopAP();
+wifi.connect(ssid, {password:password}, function(e) {
+  if (e) {
+    console.log('error during connect:',e);
+    wifi.disconnect();
+  } else {
+    console.log('connected to',ssid);
+    wifi.stopAP();
+    //wifi.save();
+  }
+});
 ```
-You may want to add `wifi.setDHCPHostname("espruino")`.
+You may want to add `wifi.setHostname("espruino")`.
 Once you're happy with your connection, you can use `wifi.save()` to persist it, so you don't have
 to reconnect each time you reset your ESP8266.
 
-Please see the [Using the ESP8266 with Wifi](/ESP8266_WifiUsage) tutorial for the recommended
+Please see the [Using the ESP8266 with Wifi](ESP8266_WifiUsage) tutorial for the recommended
 way to use the esp8266 with Wifi.
 
 To make HTTP requests, use the [HTTP library](http://www.espruino.com/Reference#http).
@@ -113,6 +143,7 @@ a connection. If multiple connections are active these buffer requirements can a
 
 GPIO Pins
 ---------
+
 The esp8266 GPIO pins support
 [totem-pole](https://en.wikipedia.org/wiki/Push%E2%80%93pull_output#Totem-pole_push.E2.80.93pull_output_stages) and
 [open-drain outputs](https://en.wikipedia.org/wiki/Open_collector),
@@ -123,20 +154,15 @@ the esp8266. Remember that GPIO6 through GPIO11 are used for the external
 flash chip and are therefore not really available. Also, GPIO0 and GPIO2
 must be pulled-up at boot and GPIO15 must be pulled-down at boot.
 
-The esp8266 ADC function is available on any pin
-(D0-D15) but really uses a separate pin on the esp8266 (this should
-be changed to an A0 pin).
-
-GPIO16 is not currently supported in Espruino, it is not a normal GPIO
-pin but rather is attached to the real-time-clock circuitry.
+GPIO16 is now supported in Espruino. **Do not use it if you use deep sleep**
 
 ### digitalPulse implementation
 
 The `digitalPulse` function is implemented by busy-waiting between pulse transitions (unlike on other Espruino
-boards where `digitalPulse` is asynchronous). 
+boards where `digitalPulse` is asynchronous).
 
-This means that if you specify a series of 10 500us pulses the esp8266 will busy-wait for 5ms in order to toggle 
-the output pin at the right moment. Other than the fact that your program will not do anything else during this 
+This means that if you specify a series of 10 500us pulses the esp8266 will busy-wait for 5ms in order to toggle
+the output pin at the right moment. Other than the fact that your program will not do anything else during this
 time, this also prevents Wifi processing and empirically, somewhere after 10ms-50ms
 the watchdog timeout will kick in and reset the chip.
 
@@ -149,14 +175,35 @@ pulse length. Instead, you need to do `digitalPulse(D0,1,[10,10,10])`.
 The setWatch implementation uses interrupts to capture incoming pulse edges and queues them. The queue can hold 16 elements, so
 setWatch will lose transitions if javascript code does not run promptly.
 
+### analogRead implementation
+
+The esp8266 ADC function is available on pin A0 or without a pin.
+Using a digital pin will return NaN
+
+Possible ways to call ananlogRead() and the returns:
+
+```
+analogRead(A0);
+=0.0029296875
+
+analogRead();
+=0.0029296875
+
+analogRead(D0);
+=NaN
+
+```
+
+
 I2C Implementation
 ------------------
+
 The I2C interface is implemented in software because the esp8266 does
 not have hardware support for I2C (contrary to what the datasheet seems
 to imply). The software implementation has the following limitations:
 - operates at approx 300Khz
 - is master-only
-- does not support clock stretching (a method by which slaves can slow down the master)
+- support clock stretching since 1v92 (a method by which slaves can slow down the master)
 
 The I2C interface can be bound to almost any pin pair, but you
 should avoid GPIO15 because it needs to be pulled-down at boot time
@@ -167,6 +214,7 @@ not 5v compatible!
 
 SPI Implementation
 ------------------
+
 Both the software SPI and hardware SPI implementations can be used. The software SPI works on
 any GPIO pins but operates at a fixed clock rate of about 1Mhz. The hardware SPI operates on
 baud rates as low as 100kHz and as high as 4Mhz (this is limited by the way the clock dividers
@@ -176,6 +224,7 @@ there is not much point to it). The hardware SPI uses the pins shown in the boar
 
 Serial port
 -----------
+
 The esp8266 has two UARTS. UART0 (`Serial1`) uses gpio1 for TX and gpio3 for RX and is used by
 the Espruino JavaScript console. It can be used for other things once the Espruino console
 is moved to another device. For instance calling `LoopbackA.setConsole()` will move the console
@@ -188,11 +237,13 @@ not available.
 
 Serial Numbers
 --------------
+
 The esp8266 does not have a serial number. It does have two mac addresses "burned-in", which one can use for identification purposes.
 `getSerial()` returns the MAC address of the STA interface.
 
 System time
 -----------
+
 The esp8266 has two notions of system time implemented in the SDK by
 `system_get_time()` and `system_get_rtc_time()`. The former has 1µs
 granularity and comes off the CPU cycle counter, the latter has approx
@@ -218,6 +269,7 @@ a time in seconds (float).
 
 Saving code to flash
 --------------------
+
 Currently 12KB of flash are reserved to save JS code to flash using the
 save() function. The total JS memory is larger (22400 bytes) so if you
 filled up the JSvars you will need compression to work well. Some simple
@@ -230,6 +282,7 @@ flashing blank.bin to the last 4KB block of the save area (0x7A000).
 
 Flash map and access
 --------------------
+
 Note: if you are looking for a free flash area to use, call `ESP8266.getFreeFlash`,
 which will return a list of available areas (see docs).
 
@@ -266,7 +319,7 @@ the flash beyond 1MB can be used for a forthcoming spiffs filesystem.
 is told to use an OTA layout with two 256KB firmwares but in fact a single 400KB+
 firmware is loaded and care is used not to conflict with the 2x256KB layout.
 
-The result of all this is the following: 
+The result of all this is the following:
 
 Start    | Start  | Length | Function
 --------:|-------:|-------:|:----------------------------------------
@@ -301,6 +354,7 @@ use the EEPROM emulation class or read/write flash directly.
 
 Main loop processing
 --------------------
+
 Espruino has the concept of a "main loop" which is executed to perform
 an iteration of work.  Since the ESP8266 SDK needs control to be returned to
 itself to handle wifi, the current design and implementation returns to the SDK
@@ -316,6 +370,7 @@ chip reset.
 
 Performance
 -----------
+
 Espruino sets the esp8266 clock to 160Mhz by default, but this can be changed back to
 the default 80Mhz from JavaScript using `require("ESP8266").setCPUFreq(80)`.
 The benefits of the lower clock frequency are assumed to be lower power consumption
@@ -342,14 +397,45 @@ Settings        | Mandelbrot | Quicksort | Display | Code Size
 
 Loading Espruino
 ----------------
+
 Espruino can be loaded into the esp8266 using any of the flashing techniques applicable
 to the esp8266 itself.  A variety of tools are available to assist with this.
 
-The Espruino ESP8266 firmware [is now distributed alongside all the other firmwares on the 
+The Espruino ESP8266 firmware [is now distributed alongside all the other firmwares on the
 Espruino Website](http://www.espruino.com/Download).
+
+Power Consumption
+-----------------
+
+| Parameter | Typical | Unit |
+| :-: | :-: | :-- |
+| Tx 802.11b, CCK 11Mbps, Pout=+17dBm | 170 | mA |
+| Tx 802.11g,OFDM 54Mbps,Pout=+15dBm | 140 | mA |
+| Tx 802.11n, MCS7, Pout=+13dBm | 120 | mA |
+| Rx 802.11b, 1024 bytes packet length, -80dBm | 50 | mA |
+| Rx 802.11g, 1024 bytes packet length, -70dBm | 56 | mA |
+| Rx 802.11n, 1024 bytes packet length, -65dBm | 56 | mA |
+| Modem-Sleep | 15 | mA |
+| Light-Sleep | 0.5 | mA |
+| Power save mode DTIM 1 | 1.2 | mA |
+| Power save mode DTIM 3 | 0.9 | mA |
+| Deep-Sleep | 10 | uA |
+| Power OFF | 0.5 | uA |
+
+Currently ESP8266 can support three low power modes: Light Sleep, Modem Sleep and Deep Sleep.
+
+Modem-Sleep requires the CPU to be working, as in PWM or I2S applications. According to 802.11 standards (like U-APSD), it saves power to shut down the Wi-Fi Modem circuit while maintaining a Wi-Fi connection with no data transmission.
+
+During Light-Sleep, the CPU may be suspended in applications like Wi-Fi switch. Without data transmission, the Wi-Fi Modem circuit can be turned off and CPU suspended to save power according to the 802.11 standard (U-APSD).
+
+Deep-Sleep does not require Wi-Fi connection to be maintained. For application with long time lags between data transmission, e.g. a temperature sensor that checks the temperature every 100s.
+E.g. sleep 300s and waking up to connect to the AP (taking about 0.3~1s), the overall average current is less than 1mA.
+
+Source: http://bbs.espressif.com/viewtopic.php?t=133
 
 Open Issues
 -----------
+
 The authoritative list of open issues is
 [on github](https://github.com/espruino/Espruino/issues?q=is%3Aopen+is%3Aissue+label%3AESP8266).
 Some of the top-level issues at the time of writing are:
@@ -358,5 +444,11 @@ Some of the top-level issues at the time of writing are:
 
 Further reading
 ---------------
+
 The esp8266 has its own [community](http://www.esp8266.com/), free books, videos and more.
 For esp8266 questions not related to Espruino, it is recommended to research using those resources.
+
+Official Espruino Boards
+-------------------------
+
+* APPEND_KEYWORD: Official Board

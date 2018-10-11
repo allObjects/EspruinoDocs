@@ -2,8 +2,10 @@
 WiFi Enabled Thermometer
 ===============================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/WiFi+Enabled+Thermometer. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Wifi,Thermometer,Web Server
-* USES: Internet,DS18B20,CC3000
+* USES: Internet,DS18B20,CC3000,Espruino Board
 
 ![Temperature Graph](WiFi Enabled Thermometer/graph.png)
 
@@ -17,7 +19,7 @@ There will be a WebServer on the CC3000, and when it is queried, a webpage will 
 You'll Need
 ----------
 
-* One [Espruino Board](/EspruinoBoard)
+* One [Espruino Board](/Original)
 * A [[DS18B20]] Temperature sensor and 4.7k resistor
 * A [[CC3000]] WiFi module
 

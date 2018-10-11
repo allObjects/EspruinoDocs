@@ -2,8 +2,10 @@
 Snake Game
 =========
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Snake. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Pico,LCD,Snake,Game
-* USES: Pico,PCD8544,PicoStarterKit
+* USES: Pico,PCD8544,PicoStarterKit,Graphics
 
 Introduction
 -----------
@@ -62,7 +64,7 @@ A7.write(1); // VCC
 // Setup SPI
 var spi = new SPI();
 // Graphics
-var g; 
+var g;
 // Snake position and direction
 var pos, dir;
 
@@ -121,7 +123,7 @@ So now, after it's sent to Espruino you see the 'snake' moving, and you can rota
 While we could wire up another [[Button]], let's just make a long press go the other way. Replace `setWatch` at the bottom of the `start` function with the following:
 
 ```
-setWatch(function(e) { 
+setWatch(function(e) {
   var duration = e.time - e.lastTime;
   if (duration<0.15)
     rotate(1);
@@ -132,7 +134,7 @@ setWatch(function(e) {
 
 Now, if you just 'dab' the button the snake will turn in one direction, and if you long-press it it'll turn in the other.
 
-So the next step is to detect when the snake bumps into itself. We'll do this by looking at which pixels are set on the screen. 
+So the next step is to detect when the snake bumps into itself. We'll do this by looking at which pixels are set on the screen.
 Replace `onFrame` with the following, and send it to Espruino again:
 
 ```
@@ -146,7 +148,7 @@ function gameOver() {
   g.drawString(s, (g.getWidth()-g.stringWidth(s))/2, g.getHeight()/2-4);
   g.flip();
   // when the button is pressed, restart
-  setWatch(function(e) { 
+  setWatch(function(e) {
     start();
   }, BTN, { edge:"rising", debounce: 50});
 }
@@ -185,7 +187,7 @@ function onFrame() {
   }
   // add current position onto the end
   history.push({x:pos.x, y:pos.y});
-  
+
   if (g.getPixel(pos.x, pos.y)) {
     gameOver();
   } else {
@@ -209,7 +211,7 @@ A7.write(1); // VCC
 // Setup SPI
 var spi = new SPI();
 // Graphics
-var g; 
+var g;
 // Current score
 var score = 0;
 // Snake position and direction
@@ -234,8 +236,8 @@ function newApple() {
   // keep coming up with random locations until there
   // is nothing drawn where we want to put the apple
   do {
-    p = { x : 6 + Math.round(Math.random()*(g.getWidth()-6)),
-          y : Math.round(Math.random()*g.getHeight()) };
+    p = { x : Math.round(Math.random()*g.getWidth()),
+          y : 6 + Math.round(Math.random()*(g.getHeight()-6)) };
   } while (g.getPixel(p.x, p.y));
   // draw the apple, and save it inthe array
   g.setPixel(p.x, p.y);
@@ -251,7 +253,7 @@ function start() {
   drawScore();  
   // Setup snake position
   pos = {x:g.getWidth()/2,y:g.getHeight()/2}; // centre of the screen
-  history.push([pos.x, pos.y]); // add to the 'history' list
+  history = [[pos.x, pos.y]]; // reset the 'history' list
   g.setPixel(pos.x, pos.y);
   dir = {x:1,y:0}; // the direction of the snake
   // Now add randomly positioned apples
@@ -263,13 +265,13 @@ function start() {
   // start off rendering frames
   setInterval(onFrame, 100);
   // When a button is pressed, rotate the snake
-  setWatch(function(e) { 
+  setWatch(function(e) {
     var duration = e.time - e.lastTime;
     if (duration<0.15)
       rotate(1);
     else
       rotate(-1);
-  }, BTN, { repeat:true, edge:"falling", debounce: 50}); 
+  }, BTN, { repeat:true, edge:"falling", debounce: 50});
 }
 
 // When Espruino starts up...
@@ -298,7 +300,7 @@ function gameOver() {
   g.drawString(s, (g.getWidth()-g.stringWidth(s))/2, g.getHeight()/2-4);
   g.flip();
   // when the button is pressed, restart
-  setWatch(function(e) { 
+  setWatch(function(e) {
     start();
   }, BTN, { edge:"rising", debounce: 50});
 }
@@ -314,7 +316,7 @@ function onFrame() {
   }
   // add current position onto the end
   history.push([pos.x, pos.y]);
-  
+
   if (g.getPixel(pos.x, pos.y)) {
     // check for apples
     var wasApple = false;
@@ -351,5 +353,3 @@ function rotate(d) {
 
 onInit();
 ```
-
-

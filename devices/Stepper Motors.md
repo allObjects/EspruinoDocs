@@ -1,10 +1,23 @@
-<!--- Copyright (c) 2013 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. -->
+<!--- Copyright (c) 2017 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. -->
 Stepper Motors
 ============
+
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Stepper+Motors. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
 
 * KEYWORDS: Stepper,Motor,Steppermotor,Stepper motor
 
 [Stepper motors](http://en.wikipedia.org/wiki/Stepper_motor) generally come in two types, [Unipolar](http://en.wikipedia.org/wiki/Stepper_motor#Unipolar_motors) with 5 or 6 wires, and [Bipolar](http://en.wikipedia.org/wiki/Stepper_motor#Bipolar_motor) with 4 wires.
+
+**There are now code libraries available to automate the task of controlling
+a stepper motor (below).** If you're interested in seeing how a stepper motor works and controlling it from first principles, read on!
+
+* The [Stepper Motor Module](/StepperMotor) allows direct connection to a stepper
+motor via a simple motor driver IC (eg. one wire per motor coil is connected from Espruino into the driver). This works on any Espruino device.
+* The [NRF52 Stepper Motor Module](/NRF52Stepper) is designed for connecting
+nRF52-based Espruino devices to a specialist stepper motor driver IC. It uses
+the nRF52 peripherals to provide glitchless stepper motor control independent
+of CPU usage.
+
 
 Wiring Up
 --------
@@ -105,7 +118,7 @@ var stepperPins = [D9,D11,D14,D12];
 var stepInterval = setInterval(doStep, 100);
 var doStep = function () {
  var d = step - targetStep;
- if (d < 0) 
+ if (d < 0)
    step++;
  else if (d > 0)
    step--;
@@ -114,14 +127,21 @@ var doStep = function () {
    digitalWrite(stepperPins, 0);
  } else {
    var time = 100 - Math.abs(d)*4;
-   if (time<10) time=10; 
+   if (time<10) time=10;
    changeInterval(stepInterval, time);
    digitalWrite(stepperPins, steps[step%steps.length]);
  }
 };
 ```
 
-Using 
+Using
 -----
 
 * APPEND_USES: Stepper Motor
+
+Buying
+-----
+
+You can get all kinds of stepper motors and drivers, however the
+[small 5V geared stepper motors on eBay](http://www.ebay.com/sch/i.html?_nkw=5v+stepper+motor+uln2003)
+are amazingly cheap, and very easy to wire up to Espruino.
