@@ -1,22 +1,27 @@
- <!--- Copyright (c) 2015 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. -->
+<!--- Copyright (c) 2018 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. -->
 Espruino Home Computer
 ======================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Espruino+Home+Computer. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: PC,Computer,Spectrum,Commodore,Micro,Home PC
-* USES: Television,KeyPad,Pico,Breadboard
+* USES: Television,KeyPad,Pico,Breadboard,Graphics,VT100
 
 [[http://youtu.be/0d3uGQUm7tM]]
 
 Many of us learnt to program on Sinclair Spectrums, Commodore 64s, BBC Micros or similar. Computers that booted straight up to a prompt and that encouraged you to play with them.
 
-In this tutorial you'll learn how to make your own JavaScript computer in a few hours using Espruino!
+In this tutorial you'll learn how to make your own JavaScript computer with [VGA](/Television) output in a few hours using Espruino!
+
+Also see [the Pixl.js Home Computer](/Espruino Home Computer] that uses
+[Pixl.js](/Pixl.js) as the display.  
 
 
 You'll Need
 ----------
 
 * An Espruino [[Pico]]
-* A piece of plastic of wood to act as a base
+* A piece of plastic or wood to act as a base
 * A [[Breadboard]]
 * 4x 4x4 [[KeyPad]]s
 * Lots of Stickers
@@ -101,7 +106,7 @@ var KEYMAPUPPER = [
   "\x01|ZXCVBNM<>? \x80\x83\x81",
   ];
 
-/* If a char in the keymap is >=128, 
+/* If a char in the keymap is >=128,
 subtract 128 and look in this array for
 multi-character key codes*/
 var KEYEXTRA = [
@@ -118,7 +123,7 @@ function setShift(s) {
   hasShift = s;
   digitalWrite(LED1, s);
 }
-  
+
 // Convert an actual key into a sequence of characters
 // And send to Loopback (where the console is)
 function handleKeyPress(e) {
@@ -131,7 +136,7 @@ function handleKeyPress(e) {
   var key = hasShift ? KEYMAPUPPER[ky][kx] : KEYMAPLOWER[ky][kx];
   if (key=="\x01") {
     setShift(!hasShift);
-  } else { 
+  } else {
     setShift(false);
     if (key && key.length) {
       if (key.charCodeAt(0)>127)
@@ -141,10 +146,10 @@ function handleKeyPress(e) {
     }
   }
 }
-  
+
 var term; // the terminal
 var g; // graphics
-  
+
 function onInit() {
   // set up the keypad
   require("KeyPad").connect(KEYROW, KEYCOL, handleKeyPress);
@@ -160,7 +165,7 @@ function onInit() {
   // use a larger font instead of the default
   require("Font8x12").add(Graphics);
   g.setFont8x12();
-  
+
   // Set up the terminal
   term = require("VT100").connect(g, {
     charWidth : 8,
@@ -180,3 +185,19 @@ function onInit() {
   LoopbackA.setConsole();
 }
 ```
+
+Using
+-----
+
+Now it's working:
+
+* The keyboard can only detect one press at a time, so `Shift` toggles uppercase
+letters (indicated with the LED), and typing a letter reverts to lowercase. Holding
+down `Shift` and another key won't work.
+* Typing can be quite painful, so use the `Tab` key (on the left) as much
+as possible to fill in words!
+* The graphics for the screen is available via methods on the `g` variable -
+eg, `g.fillRect(20,20,40,40)` or `g.clear()`.
+* `reset()` will reset *everything* - including your code for keyboard handling.
+To avoid this, turn on `save on send, even after reset` in the Web IDE's communications
+options and upload again.

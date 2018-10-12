@@ -2,9 +2,11 @@
 USB and USB HID
 =============
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/USB. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: USB,HID,Human Interface Device,VCP,CDC,Mouse,Keyboard,Joystick
 
-Both the [Espruino Board](/EspruinoBoard) and the [[Pico]] have USB ports. When connected to a PC, they appear as a Virtual Communications Port (VCP) - as if you plugged in a USB-Serial converter dongle. On that port there's the console interface, which allows you to write code on Espruino using nothing more than a simple serial terminal.
+Both the [Espruino Board](/Original) and the [[Pico]] have USB ports. When connected to a PC, they appear as a Virtual Communications Port (VCP) - as if you plugged in a USB-Serial converter dongle. On that port there's the console interface, which allows you to write code on Espruino using nothing more than a simple serial terminal.
 
 However Espruino [[Pico]] **also contains** a [USB HID mode](http://en.wikipedia.org/wiki/USB_human_interface_device_class). This means that when set up, it can appear to be a USB Human Interface device such as a Mouse, Keyboard, or Joystick in addition to a Virtual Com Port.
 

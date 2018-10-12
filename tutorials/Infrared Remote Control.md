@@ -2,6 +2,8 @@
 Infrared Remote Control
 ==========================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Infrared+Remote+Control. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Remote,IR,Infrared,,IR Remote,Control
 * USES: Only Espruino Board,Espruino Board,IR Receiver
 
@@ -10,12 +12,14 @@ Introduction
 
 Wouldn't it be cool if you could control Espruino from an Infrared remote control? You can!
 
+Do you want to control IR devices from Espruino instead?  Check out [using Puck.js's IR](/Puck.js Infrared), using [an IR transmitter with Espruino](/Pico Infrared), and [decoding Pronto Hex Infrared codes](/pronto)
+
 **Note:** There's now [an infrared receiver module](IRReceiver) that you can use to simplify responding to infrared signals.
 
 You'll Need
 ----------
 
-* One [Espruino Board](/EspruinoBoard)
+* One [Espruino Board](/Original)
 * An Infrared Receiver
 
 Getting an Infrared Receiver
@@ -57,7 +61,7 @@ Just connect as follows:
 |----------|----------|
 | GND | GND |
 | power | 3.3v |
-| signal | Any signal pin. I'll use A0 | 
+| signal | Any signal pin. I'll use A0 |
 
 Software
 -------
@@ -171,4 +175,3 @@ function handleCode() {
 ```
 
 And now, all you have to do is make the servo motor turn your Amp's volume control and you can remote-control it!
-

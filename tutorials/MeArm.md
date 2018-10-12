@@ -2,8 +2,10 @@
 MeArm Robotic Arm
 ===============
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/MeArm. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Me Arm,Robot Arm,Robotics
-* USES: Servo Motor,MeArm,IRReceiver
+* USES: Servo Motor,MeArm,IRReceiver,Espruino Board
 
 [[http://youtu.be/WRMF7wJ57Ak]]
 
@@ -17,7 +19,7 @@ This tutorial will show you how to wire it up, and will make it so that it can b
 You'll Need
 ----------
 
-* An [Espruino Board](/EspruinoBoard) wired up for [[Servo Motors]]
+* An [Espruino Board](/Original) wired up for [[Servo Motors]]
 * An [IR Reciever](/IRReceiver)
 * A TV remote control
 * A MeArm: either a kit from [Phenoptix](http://www.phenoptix.com/products/mearm-pocket-sized-robot-arm), or laser cut your own from design files on [Thingiverse](http://www.thingiverse.com/thing:360108)
@@ -141,4 +143,3 @@ require("IRReceiver").connect(C3, function(code) {
 // Finally, initialise
 onInit();
 ```
-

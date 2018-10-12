@@ -2,15 +2,17 @@
 Pico Clock
 =========
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Pico+Clock. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Pico,LCD,Clock,Time
-* USES: Pico,PCD8544,PicoStarterKit
+* USES: Pico,PCD8544,PicoStarterKit,Graphics
 
 Introduction
 -----------
 
 On most Arduinos, if you want to keep track of time then you have to use an external RTC (Real Time Clock) chip.
 
-Both the [[Pico]] and the original [Espruino Board](/EspruinoBoard) have one built-in though. As an example we'll make a simple clock using the LCD display.
+Both the [[Pico]] and the original [Espruino Board](/Original) have one built-in though. As an example we'll make a simple clock using the LCD display.
 
 **Note:** While the Pico has an RTC built in, by default it doesn't have an accurate watch crystal and so uses its internal oscillator which isn't that accurate. It won't keep proper time over a month, but in conjunction with some other time source (an internet connection, or [the NPL time signal](http://en.wikipedia.org/wiki/Time_from_NPL)) it'll be just fine.
 
@@ -89,7 +91,7 @@ function draw() {
   g.clear();
   var t = new Date();
   var date = t.getDate()+" "+MONTHS[t.getMonth()]+" "+t.getFullYear();
-  var time = t.getHours()+":" + 
+  var time = t.getHours()+":" +
        ("0"+t.getMinutes()).substr(-2);
   var secs = ("0"+t.getSeconds()).substr(-2);
   // top left date

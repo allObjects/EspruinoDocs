@@ -2,6 +2,8 @@
 BBC micro:bit
 ============
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/MicroBit. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: micro:bit,Micro Bit,MicroBit,nRF51822
 
 ![The BBC micro:bit](MicroBit/board.jpg)
@@ -28,14 +30,21 @@ devices with low flash memory" will not be included)
 * Low program memory (Espruino on micro:bit has only 350 vars available, whereas
 on other devices it has over 10 times that)
 
+[[http://youtu.be/0FgjHf4UEwQ]]
+
 If you want the full experience, please consider buying [an official Espruino Board](http://www.espruino.com/Order).
-[Puck.js](http://www.espruino.com/Puck.js) is especially useful if you want to
+[Puck.js](http://www.espruino.com/Puck.js) and [Pixl.js](http://www.espruino.com/Pixl.js)  are especially useful if you want to
 experiment with Bluetooth LE.
+
+Contents
+--------
+
+* APPEND_TOC
 
 Flashing Espruino
 ------------------
 
-There is a build of Espruino designed specifically for the micro:bit. Releases are available from the [Download page](/Download) - however you may also download 'cutting edge' builds [from here](http://www.espruino.com/binaries/travis/master/) - these are updated every time something changes in Espruino's source code, so may occasionally not work.
+<a name="firmware-updates"></a>There is a build of Espruino designed specifically for the micro:bit. Releases are available from the [Download page](/Download#microbit) - however you may also download 'cutting edge' builds [from here](http://www.espruino.com/binaries/travis/master/) - these are updated every time something changes in Espruino's source code, so may occasionally not work.
 
 To flash onto your micro:bit:
 
@@ -168,8 +177,22 @@ Tutorials using the micro:bit Board:
 
 * APPEND_USES: MicroBit
 
+Tutorials using Bluetooth LE:
+
+* APPEND_USES: Only BLE,-MicroBit
+
+Tutorials using Bluetooth LE and functionality that may not be part of the micro:bit:
+
+* APPEND_USES: BLE,-Only BLE,-MicroBit
+
 
 Buying
 -------
 
 micro:bits are currently available to buy [in the UK](https://www.element14.com/community/community/stem-academy/microbit) and [in the United States](https://www.techwillsaveus.com/shop/microbit/).
+
+
+Official Espruino Boards
+-------------------------
+
+* APPEND_KEYWORD: Official Board

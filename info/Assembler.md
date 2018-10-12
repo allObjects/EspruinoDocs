@@ -1,16 +1,30 @@
 <!--- Copyright (c) 2013 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. -->
 Inline Assembler
-=============
+=================
+
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Assembler. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
 
 * KEYWORDS: Assembler,Asm,ARM,Thumb,Thumb2,Thumb-2,C code,inline C,Built-In
 
 The Web IDE allows you to write inline assembler in the right-hand pane.
+You can use a series of normal JS Strings:
 
 ```
 var adder = E.asm("int(int)",
 "movs    r1, #3",
 "adds    r0, r0, r1", // add two 32 bit values
-"bx  lr"); // return
+"bx  lr");            // return
+```
+
+Or can use JavaScripts templated strings to avoid having
+to cope with newlines:
+
+```
+var adder = E.asm("int(int)",`
+movs    r1, #3
+adds    r0, r0, r1 // add two 32 bit values
+bx  lr             // return
+`);
 ```
 
 Which can then be used like a normal function:
@@ -31,12 +45,13 @@ This is handled as follows:
 
 **Note:**
 
+* This only works on ARM-based microcontrollers - ARM Thumb assembler will not work on ESP8266/ESP32.
 * The assembler is only partially implemented so will only parse some opcodes at the moment. If you find something missing [please let us know!](https://github.com/espruino/EspruinoTools/issues)
-* If this is a bit hardcore for you, there's now the option of [Compiled JavaScript](/Compilation)
+* If this is a bit hardcore for you, there are now the options of [Compiled JavaScript](/Compilation) or [Inline C](/InlineC)
 
 For an ARM Thumb reference, [see this link](https://ece.uwaterloo.ca/~ece222/ARM/ARM7-TDMI-manual-pt3.pdf)
 
-Argument Specifiers / Call Signature
+Argument Specifiers / Call Signature<a name="arguments"></a>
 --------------------------------
 
 The first argument of `E.asm` (and `E.nativeCall`) is the signature of the call, of the type:
@@ -60,8 +75,8 @@ The registers r0, r1, r2 and r3 contain the first 4 32 bit arguments, and r0 is 
 Registers r0-r3 are free to use - however any other registers have to be restored to their previous values before the function returns to the caller. This is usually done using `push {r4,r5,r6,...}` and `pop {r4,r5,r6,...}`.
 
 
-Accessing Data
-------------
+Accessing Data - iterating
+---------------------------
 
 By itself, the assembler isn't too useful. What you need is to be able to access your data. Luckily Espruino makes it pretty easy. Above, we used `Array.map` to call assembler for every element in an array - you can use this on `ArrayBuffer`s like `Uint8Array` too. This is not part of the EcmaScript 5 spec (but is in EcmaScript 6).
 
@@ -86,15 +101,53 @@ var a = new Int16Array(100);
 for (var i in a) a[i]=i;
 
 // effectively this is 'function (a,b) { return a+b; }'
-var adder = E.asm("int(int,int)", 
-  "adds    r0, r0, r1",
-  "bx  lr");
+var adder = E.asm("int(int,int)", `
+  adds    r0, r0, r1
+  bx  lr
+`);
 
 // Call our assembler on every item and return the result
 var sum = a.reduce(adder);
 
-// prints 4950 
-console.log(sum); 
+// prints 4950
+console.log(sum);
+```
+
+Accessing Data - directly
+-------------------------
+
+When Espruino allocates data in a 'flat string' (a contiguous area of
+memory) you can access it by grabbing its address with `E.getAddressOf`
+and passing it into your assembler code:
+
+```
+// Write 1,2,3,4 into the address pointed to by the first argument
+var setData = E.asm("void(int)",`
+movw    r1, #1
+strb    r1, [r0, #0]
+movw    r1, #2
+strb    r1, [r0, #1]
+movw    r1, #3
+strb    r1, [r0, #2]
+movw    r1, #4
+strb    r1, [r0, #3]
+bx  lr
+`);
+
+
+// Allocate a flat string of 10 bytes
+var NUM_BYTES = 10;
+var flat_str = E.toString({data : 0, count : NUM_BYTES});
+// wrap it in a Uint8Array
+var arr = new Uint8Array(E.toArrayBuffer(flat_str));
+// Get the address in RAM of the actual flat string
+var addr = E.getAddressOf(flat_str, true);
+// Print array contents
+console.log("Before : ",arr.join(","));
+// Modify array contents
+setData(addr);
+// Print them again
+console.log("After ",arr.join(","));
 ```
 
 Constants
@@ -103,11 +156,11 @@ Constants
 In ARM Thumb, you can't store full 32 bit literal values in assembler, so loading big constants is a bit harder than you'd expect. Instead of directly specifying the constant, you must define an area of memory that will contain it, and then you must reference that area (relative to the current instruction). This is even more painful because the program counter is 4 bytes ahead of current execution:
 
 ```
-var getConst = E.asm("int()",
-"ldr	r0, [pc, #0]", // 2*2 - 4 = 0
-"bx lr",
-".word	0x1234BEEF"
-);
+var getConst = E.asm("int()", `
+  ldr	r0, [pc, #0]   // 2*2 - 4 = 0
+  bx lr
+.word	0x1234BEEF
+`);
 
 console.log(getConst().toString(16));
 ```
@@ -115,12 +168,12 @@ console.log(getConst().toString(16));
 In reality, you'll want to use labels and let the assembler sort this out for you:
 
 ```
-var getConst = E.asm("int()",
-"  ldr	r0, my_data",
-"  bx lr",
-"my_data:",
-"  .word	0x1234BEEF"
-);
+var getConst = E.asm("int()", `
+  ldr	r0, my_data
+  bx lr
+my_data:
+  .word	0x1234BEEF
+`);
 
 console.log(getConst().toString(16));
 ```
@@ -128,14 +181,14 @@ console.log(getConst().toString(16));
 Even this can cause some problems. You can only access an address that is a multiple of 4 bytes *ahead of the current instruction*. If you get an error when assembling such as `Invalid number 'mylabel' - must be between 0 and 1020 and a multiple of 4` then you'll need to pad out the constants with a `nop`:
 
 ```
-var getConst = E.asm("int()",
-"  ldr	r1, my_data",
-"  mov  r0,r1", // extra instruction makes non-2 aligned
-"  bx lr",
-"  nop", // must pad
-"my_data:",
-"  .word	0x1234BEEF"
-);
+var getConst = E.asm("int()",`
+  ldr	r1, my_data
+  mov  r0,r1        // extra instruction makes non-2 aligned
+  bx lr
+  nop               // must pad
+my_data:
+  .word	0x1234BEEF
+`);
 
 console.log(getConst().toString(16));
 ```
@@ -143,19 +196,19 @@ console.log(getConst().toString(16));
 **Note:** If you just need a small constant then you may be ok. You can use `mov` to load a value between 0 and 255:
 
 ```
-var getConst = E.asm("int()",
-"mov	r0, #254",
-"bx lr",
-);
+var getConst = E.asm("int()", `
+  mov	r0, #254
+  bx lr
+`);
 ```
 
 Or you can use `movw` to load a 16 bit values (between 0 and 65535) but *movw is a double-length instruction that takes 4 bytes in total*.
 
 ```
-var getConst = E.asm("int()",
-"movw	r0, #65535",
-"bx lr",
-);
+var getConst = E.asm("int()", `
+  movw	r0, #65535
+  bx lr
+`);
 ```
 
 Storing Data
@@ -166,16 +219,16 @@ While ARM Thumb has a `LDR` instruction that will load from a label, there is no
 For example the following section of code will return a value that increments after each call:
 
 ```
-var inc = E.asm("int()",
-"adr    r1, data", // Get address of 'data'
-"ldr    r0, [r1]", // Load the value of data into R0
-"add    r0, #1",   // Add one to it
-"str    r0, [r1]", // Save the value of R0 into 'data'
-"bx lr",           // Return (R0 is the value)
-"nop",
-"data:",           // ... padding
-".word    0x0"     // the word that we'll increment
-);
+var inc = E.asm("int()",`
+  adr    r1, data // Get address of 'data'
+  ldr    r0, [r1] // Load the value of data into R0
+  add    r0, #1   // Add one to it
+  str    r0, [r1] // Save the value of R0 into 'data'
+  bx lr           // Return (R0 is the value)
+  nop
+data:             // ... padding
+  .word    0x0    // the word that we'll increment
+`);
 ```
 
 
@@ -188,7 +241,7 @@ You can write directly to the hardware in order to perform IO very quickly. Howe
 
 Useful docs are:
 
-* STM32F103 reference (see [[EspruinoBoard]])
+* STM32F103 reference (see [[Original]])
 * [STM32F1 header file](https://github.com/espruino/Espruino/blob/master/targetlibs/stm32f1/lib/stm32f10x.h) - see `GPIO_BASE` and `GPIO_TypeDef`.
 
 GPIOA's Output data register is `0x4001080C` (which sets ALL pins on that port). To set individual pins you can write to BSRR = `0x40010810` and to clear them you can write to BRR = `0x40010814`
@@ -198,16 +251,16 @@ So you could write the following code to give the 3 LEDs (on A13,A14 and A15) a 
 ```
 digitalWrite([LED1,LED2,LED3],0); // set up the output state (easier done in JS!)
 
-var pulse = E.asm("void()",
-" ldr	r2, gpioa_addr", // Get the gpio address
-" movw	r3, #57344", // the bit mask for A13,A14,A15 - 0b1110000000000000 = 57344
-" str	r3, [r2, #0]", // set *0x40010810 = 57344 (set pins A13-A15)
-" str	r3, [r2, #4]", // set *0x40010814 = 57344 (clear pins A13-A15)
-" bx	lr", // return
-"gpioa_addr:"
-" .word	0x40010810" 
+var pulse = E.asm("void()",`
+  ldr	r2, gpioa_addr  // Get the gpio address
+  movw	r3, #57344    // the bit mask for A13,A14,A15 - 0b1110000000000000 = 57344
+  str	r3, [r2, #0]    // set *0x40010810 = 57344 (set pins A13-A15)
+  str	r3, [r2, #4]    // set *0x40010814 = 57344 (clear pins A13-A15)
+  bx	lr              // return
+gpioa_addr:
+  .word	0x40010810
 // Our data
-);
+`);
 
 pulse();
 ```
@@ -226,17 +279,17 @@ So you could write the following code to give LED1 a quick pulse (it's on pin B2
 ```
 digitalWrite(LED1,0); // set up the output state (easier done in JS!)
 
-var pulse = E.asm("void()",
- "ldr  r2,gpiob_addr", 
- "movw  r0,#4", // 1<<2 = pin 2 on the port
- "lsl r1,r0,#16", // shift it left by 16 for the reset register
- "str  r0,[r2]", // Turn on
- "str  r1,[r2]", // Turn off
- "bx  lr",
- "nop",
- "gpiob_addr:",
- ".word  0x40020418"
- );
+var pulse = E.asm("void()",`
+  ldr  r2,gpiob_addr
+  movw  r0,#4    // 1<<2 = pin 2 on the port
+  lsl r1,r0,#16  // shift it left by 16 for the reset register
+  str  r0,[r2]   // Turn on
+  str  r1,[r2]   // Turn off
+  bx  lr
+  nop
+gpiob_addr:
+  .word  0x40020418
+`);
 pulse();
 ```
 
@@ -247,13 +300,14 @@ Loops
 You can do loops as follows. This example adds together all the numbers below and including the current one:
 
 ```
-var a = E.asm("int(int,int)", 
-  "loopStart:"
-  " adds   r0, r0, r1",
-  " sub    r1, r1, #1",
-  " cmp    r1, #0",
-  " bgt    loopStart",
-  " bx  lr");
+var a = E.asm("int(int,int)", `
+loopStart:
+  adds   r0, r0, r1
+  sub    r1, r1, #1
+  cmp    r1, #0
+  bgt    loopStart
+  bx  lr
+`);
 
 for (var i=1;i<10;i++)
   console.log(i, a(0,i));
@@ -284,23 +338,23 @@ For instance the following code measures the number of state changes every secon
 
 ```
 // inc function from above
-var inc = E.asm("void()",
-"adr    r1, data",
-"ldr    r0, [r1]",
-"add    r0, #1",
-"str    r0, [r1]",
-"bx lr",
-"nop",
-"data:",
-".word    0x0"
-);
+var inc = E.asm("void()",`
+  adr    r1, data
+  ldr    r0, [r1]
+  add    r0, #1
+  str    r0, [r1]
+  bx lr
+  nop
+data:
+  .word    0x0
+`);
 var dataPtr = ASM_BASE-4; // the address of 'data'
 
 // Now call inc when the button is pressed - in an IRQ
 setWatch(inc, BTN, { irq:true });
 
 // every second...
-setInterval(function() { 
+setInterval(function() {
   console.log(peek32(dataPtr)); // print the value of the counter
   poke32(dataPtr,0); // reset the counter
 }, 1000);
@@ -316,7 +370,9 @@ In order to be properly useful you'll probably want to access the current time:
 Compiling C Code
 --------------
 
-While you can't directly inline C code (yet!), once you have [installed a toolchain that will compile Espruino](https://github.com/espruino/Espruino/blob/master/README.md#building), you can compile C code with:
+You can also inline compile C code by using the [Inline C Compiler](/InlineC).
+
+Another way to compile C code is to use the [toolchain that will compile Espruino](https://github.com/espruino/Espruino/blob/master/README.md#building):
 
 ```Bash
 arm-none-eabi-gcc -mlittle-endian -mthumb -mcpu=cortex-m3  -mfix-cortex-m3-ldrd  -mthumb-interwork -mfloat-abi=soft -nostdinc -nostdlib -c test.c -o test.o
@@ -346,7 +402,7 @@ Which you can then turn into:
 ```
 var ASM_BASE=process.memory().stackEndAddress;
 var ASM_BASE1=ASM_BASE+1/*thumb*/;
-[0x4a02,0xf44f,0x4360,0x6013,0x6053,0x4770,0x0810,0x4001].forEach(function(v) { poke16((ASM_BASE+=2)-2,v); }); 
+[0x4a02,0xf44f,0x4360,0x6013,0x6053,0x4770,0x0810,0x4001].forEach(function(v) { poke16((ASM_BASE+=2)-2,v); });
 var pulse = E.nativeCall(ASM_BASE1, "void()")
 ```
 

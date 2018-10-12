@@ -2,6 +2,8 @@
 Remote Control Sockets
 ======================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Remote+Control+Sockets. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Remote Control,RCT-08,Socket,Mains
 * USES: Espruino Board,433Mhz,CC3000,Internet
 
@@ -39,7 +41,7 @@ Unless you have a storage oscilloscope, working out the protocol of your particu
 You'll Need
 ----------
 
-* An [Espruino Board](/EspruinoBoard) 
+* An [Espruino Board](/Original) 
 * A [[433Mhz]] Radio transmitter/receiver pair
 * A [[CC3000]] module (if you want to web-enable your sockets)
 

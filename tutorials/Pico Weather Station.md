@@ -2,8 +2,10 @@
 Pico Weather Station
 =================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Pico+Weather+Station. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Pico,LCD,Weather,RSS,Feed
-* USES: Pico,PCD8544,ESP8266
+* USES: Pico,PCD8544,ESP8266,Graphics
 
 Introduction
 -----------
@@ -107,7 +109,7 @@ function getWeather() {
   // do an HTTP request
   require("http").get(WEATHER_URL, function(res) {
     // console.log("Response: ",res);
-    
+
     // read the whole response into a variable
     // note: this works here but isn't a great idea - big responses can
     // easily use up all the available memory
@@ -127,16 +129,13 @@ function onInit() {
   console.log("Init ESP8266...");
   wifi = require("ESP8266WiFi").connect(Serial2, function(err) {
     if (err) throw err;
-    wifi.reset(function(err) {
+    console.log("Connecting to WiFi");
+    wifi.connect(WLAN_NAME, WLAN_KEY, function(err) {
       if (err) throw err;
-      console.log("Connecting to WiFi");
-      wifi.connect(WLAN_NAME, WLAN_KEY, function(err) {
-        if (err) throw err;
-        console.log("Connected");
-        // Now start getting weather...
-        setInterval(getWeather, 60000); // every 60s
-        getWeather(); // do the first one right away
-      });
+      console.log("Connected");
+      // Now start getting weather...
+      setInterval(getWeather, 60000); // every 60s
+      getWeather(); // do the first one right away
     });
   });
   // Setup SPI for LCD

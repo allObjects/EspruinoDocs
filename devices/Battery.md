@@ -2,14 +2,17 @@
 Battery
 =========
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Battery. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Battery,Charger,LiPo,Li-ion,Power
 
 ![Battery and Charger](Battery/olimex.jpg)
 
 If you plan to use Espruino with a battery, a small LiPo cell and charger like those above are probably the best things to use - see [below](#buying) for where to find them.
 
-* [Original Espruino boards](/EspruinoBoard) come with a JST PHR-2 2 Pin connector for batteries
+* [Original Espruino boards](/Original) come with a JST PHR-2 2 Pin connector for batteries
 * Espruino [[Pico]] comes with a [place to solder](/Pico#battery) a JST connector (or normal 0.1" pins can be used instead)
+* [Pixl.js](/Pixl.js) comes with a place to solder a JST connector (or normal 0.1" pins can be used instead)
 
 The JST connector wiring is as follows:
 
@@ -26,7 +29,7 @@ Adafruit [has a good tutorial on different kinds of Lithium Battery](https://lea
 Charging
 -------
 
-Espruino Boards do not contain a battery charger circuit (although the [original Espruino revision 1v4](/EspruinoBoard) has a place where a MAX1551 charger IC can be soldered).
+Espruino Boards do not contain a battery charger circuit (although the [original Espruino revision 1v4](/Original) has a place where a MAX1551 charger IC can be soldered).
 
 While NiCd and NiMh batteries can be safely trickle charged with a resistor, Lithium Ion batteries need to be charged properly or there may be a risk of fire. If using Lithium Ion batteries we'd suggest that you use a dedicated charger board (links [below](#buying).
 
@@ -40,15 +43,15 @@ While USB Power packs are a cheap and convenient way to power Espruino, there ar
 
 If you're willing to open up your USB power pack, you may be able to add wires to power Espruino directly from the Lithium Ion cell. This can be especially useful when connecting Espruino to solar powered USB power packs.
 
-<a name="buying"></a>Buying 
+<a name="buying"></a>Buying
 ------
 
 ### Batteries
 
 * [Adafruit batteries and chargers](http://www.adafruit.com/categories/138)
 * Olimex [battery](https://www.olimex.com/Products/Power/BATTERY-LIPO1400mAh/) and [charger](https://www.olimex.com/Products/Power/USB-uLiPo/), or [selection of batteries](https://www.olimex.com/Products/Power/)
-* Buy general purpose charger on [eBay](http://www.ebay.com/sch/i.html?_nkw=genuine+b6+imax) 
-* See [this page](/EspruinoBoard#connecting_batteries) for details on where to buy the connectors
+* Buy general purpose charger on [eBay](http://www.ebay.com/sch/i.html?_nkw=genuine+b6+imax)
+* See [this page](/Original#connecting_batteries) for details on where to buy the connectors
 
 ### Female Connectors (for batteries)
 

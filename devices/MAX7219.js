@@ -22,19 +22,29 @@ setTimeout(function() {
 */
 exports.connect = function(/*=SPI*/spi, /*=PIN*/cs, screens) {
   screens = screens||1;
+  spi.write ({data:[0xf,0x0], count:screens}, cs);  // display test off (can get stuck on)
   spi.write ({data:[0xa,0xf], count:screens}, cs);  // intensity  -full
   spi.write ({data:[0xb,0x7], count:screens}, cs);  // scan limit - all 8 chars
   spi.write ({data:[0xc,0], count:screens}, cs);    // shutdown
   return {
-    /// Display the given characters - only 0123456789-EHLP are possible
+    /// Display the given characters - only 0123456789-EHLP are possible, but '.' is also decoded
     set : function(val) {
       spi.write([0x9,0xff],cs); // decode all as numbers
       var map = "0123456789-EHLP ";
-      var s = "        "+val;
-      if (s.length>8) s = s.substr(s.length-8);
-      for (var i=0;i<8;i++) {
-        spi.write([8-i,map.indexOf(s[i])],cs);
+      var a = new Array(8);
+      a.fill(15); // all off
+      val = val.toString();
+      var hadDot = false;
+      var j = 7;
+      for (var i=val.length-1;i>=0;i--) {
+        if (val[i]!=".") {
+          if (j>=0) 
+            a[j--] = map.indexOf(val[i]) | (hadDot?128:0);
+          hadDot = false;
+        } else hadDot = true;
       }
+      for (i=0;i<8;i++)
+        spi.write([8-i,a[i]],cs);
       spi.write([0x0c,1],cs); // no shutdown
     },
     // Send the given raw LED data to the display
@@ -43,7 +53,7 @@ exports.connect = function(/*=SPI*/spi, /*=PIN*/cs, screens) {
       for (var row=0;row<8;row++) {
         digitalWrite(cs, 0);
         for (var i=screens-1;i>=0;i--) {
-          spi.send([8-row, val[i+row*screens]]);
+          spi.write([8-row, val[i+row*screens]]);
         }
         digitalWrite(cs, 1);
       }
@@ -51,7 +61,7 @@ exports.connect = function(/*=SPI*/spi, /*=PIN*/cs, screens) {
     },
     // Turn display off
     off : function() {
-      spi.write({data:[0xc,0], count:screens}, cs);
+      spi.write({data:[0xc, 0], count:screens}, cs);
     },
     // Turn display on
     on: function() {
@@ -59,7 +69,7 @@ exports.connect = function(/*=SPI*/spi, /*=PIN*/cs, screens) {
     },
     // Set intensity (0 to 1)
     intensity : function(i) {
-      spi.write({data:[0xA,E.clip(i*15,0,15)], count:screens}, cs);
+      spi.write({data:[0xA, E.clip(i*15,0,15)], count:screens}, cs);
     },
     // Test the display
     displayTest: function(mode) {

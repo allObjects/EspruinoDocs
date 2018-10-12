@@ -2,8 +2,10 @@
 Wireless Temperature Sensor
 ===============================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Wireless+Temperature+Sensor. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: Wireless,Temperature,NRF24L01+,DS18B20
-* USES: DS18B20,NRF24L01+,PCD8544
+* USES: DS18B20,NRF24L01+,PCD8544,Espruino Board,Graphics
 
 ![Wireless Temperature Sensor](Wireless Temperature Sensor/final.jpg)
 
@@ -15,7 +17,7 @@ This is a quick and easy Wireless Temperature Sensor. One Espruino reads the tem
 You'll Need
 ----------
 
-* Two [Espruino Boards](/EspruinoBoard) wired up with an [NRF24L01+](/NRF24L01P) module
+* Two [Espruino Boards](/Original) wired up with an [NRF24L01+](/NRF24L01P) module
 * A [[DS18B20]] Temperature sensor and 4.7k resistor
 * A [Nokia 5110 LCD](/PCD8544)
 

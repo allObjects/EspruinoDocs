@@ -22,6 +22,8 @@ Documentation files are written [GitHub Markdown](https://help.github.com/articl
     * APPEND_USES: part              ; Append a list of pages that have this part in their USES_PARTS list
     * APPEND_JSDOC: filename         ; Append JavaScript documentation based on the JS in the given file
     * APPEND_PINOUT: boardname       ; Append Pinout for the given board
+    * BUYFROM: normalprice,bulkprice,link1,link2  ; Append a floating 'buy from' window
+    * APPEND_TOC                     ; Append a table of contents made from H1/H2/H3
 
 It also looks for a title (second line, after copyright notices) which it uses to create the title of the HTML page (and of links to it).
 
@@ -38,6 +40,44 @@ It then converts the Markdown to HTML and shoves it on the Espruino website. Lov
 Any `.js` files in `examples` have a webpage created that uses the comments as markdown, and then adds the code as a code block right at the end.
 
 All other `.js` files are treated as modules. They are minified using Google's online closure compiler and the SIMPLE_OPTIMISATIONS flag. To get advanced optimisations, you must add the exact text `@compilation_level ADVANCED_OPTIMIZATIONS` into the comments at the head of the file.
+
+## Common keywords
+
+Common keywords for USES/APPEND_USES are:
+
+```
+// Boards
+Espruino Board
+EspruinoWiFi
+Pico
+Puck.js
+Pixl.js
+MDBT42Q
+MicroBit
+Thingy52
+
+// Other things
+Internet       An internet connection
+Graphics       Graphics Library
+Waveform       Waveform Library
+AT             AT Command library
+Speaker
+PWM
+Infrared
+ESP8266        ESP8266 attached to an Espruino
+BLE            Bluetooth LE (eg via Puck.js) but may need board-specific hardware
+Only BLE       Bluetooth LE (eg via Puck.js) but applicable to anything
+Web Bluetooth
+```
+
+Common keywords for KEYWORDS/APPEND_KEYWORDS are:
+
+```
+Espruino
+Official Board
+PCB
+Pinout                 Page contains pinout info
+```
 
 ## Build Requirements
 
@@ -116,7 +156,7 @@ You can load a development version of the website locally.  It will *not* look e
 $ npm start
 ```
 
-Then load up a page in a browser: [http://localhost:3040/EspruinoBoard](http://localhost:3040/EspruinoBoard)
+Then load up a page in a browser: [http://localhost:3040/Original](http://localhost:3040/Original)
 
 # Troubleshooting
 

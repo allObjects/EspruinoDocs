@@ -2,8 +2,10 @@
 Soldering an LCD directly to Espruino
 ===============================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Onboard+LCD. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: LCD,Small,Compact
-* USES: PCD8544
+* USES: PCD8544,Espruino Board
 
 ![Soldered LCD Display](Onboard LCD/final.jpg)
 
@@ -15,7 +17,7 @@ The [[PCD8544]] LCD uses so little power that it can easily be powered directly 
 You'll Need
 ----------
 
-* One [Espruino Board](/EspruinoBoard)
+* One [Espruino Board](/Original)
 * A [[PCD8544]] LCD Display and some pin strip (this should come with it)
 
 Wiring Up

@@ -2,20 +2,22 @@
 Pocket 'walking' GPS
 =================
 
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/Pocket+Walking+GPS. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
 * KEYWORDS: GPS,LCD
-* USES: GPS,PCD8544
+* USES: GPS,PCD8544,Espruino Board,Graphics
 
 Introduction
 -----------
 
-In the UK, all the walking maps are specially aligned with [OS Grid References](http://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid), so given one number you can look up exactly where you are. 
+In the UK, all the walking maps are specially aligned with [OS Grid References](http://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid), so given one number you can look up exactly where you are.
 
 This is extremely useful, and in fact most GPS's have the functionality built in. However often it requires a lot of messing around with buttons to get to the right menu. What if you wanted a simple, small device that did just one thing: displaying OS coordinates of your location in large, easily readable text?
 
 You'll Need
 ----------
 
-* One [Espruino Board](/EspruinoBoard)
+* One [Espruino Board](/Original)
 * A [Nokia 5110 LCD](/PCD8544)
 * A [[GPS]] module
 * A [[Battery]]
@@ -88,9 +90,9 @@ OsGridRef.latLongToOsGrid = function(point) {
 };
 
 // ----------------------------------- One wrapper function needed to make it work...
-Number.prototype.toRad = function() { 
+Number.prototype.toRad = function() {
   return this*Math.PI/180;
-}; 
+};
 
 
 SPI3.setup({ baud: 1000000, sck:B3, mosi:B5 });
@@ -120,4 +122,3 @@ var gps = require("GPS").connect(Serial4, function(data) {
 
 onInit();
 ```
-

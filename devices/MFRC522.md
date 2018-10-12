@@ -1,11 +1,14 @@
 <!--- Copyright (c) 2015 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. -->
 MFRC522 NFC/RFID module
-==================
+=======================
 
-* KEYWORDS: Module,SPI,NFC,RFID,MFRC522,RC522,NXP,13.56 MHz,Mifare
+<span style="color:red">:warning: **Please view the correctly rendered version of this page at https://www.espruino.com/MFRC522. Links, lists, videos, search, and other features will not work correctly when viewed on GitHub** :warning:</span>
+
+* KEYWORDS: Module,SPI,NFC,RFID,MFRC522,RC522,NXP,13.56 MHz,Mifare,RFID,RFID-RC522,RC522
 
 The MFRC522 is an RFID reader chip. It's common and very easy to interface to with the [[MFRC522.js]] module.
 
+![Common MFRC522 reader](MFRC522.jpg)
 
 Wiring Up
 --------
@@ -45,7 +48,7 @@ setInterval(function() {
 Once the module is connected, you can poll the MFRC522 to see if it has any cards in range using `nfc.findCards(...)`. If a card is in range, it will return an array containing the unique ID of that card.
 
 
-Using 
+Using
 -----
 
 * APPEND_USES: MFRC522
