@@ -1,13 +1,14 @@
+/* Copyright (c) 2016 Markus Muetschard, markus@muet.com and 2013 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. */
 /*
-  
+
 ----- XPT2046 ------------------------- 77 vars, 85 with calibrated calculation.
 
 Module for connecting to the XPT2046 / ADS7843 / ... resistive touchscreen controllers. 
 
 The XPT2046 is pin and function compatible to ADS7843 touch screen controller.
 
-The  module is based on the ADS7843 module structure, but externalizes the
-function mapping the analog touch values to (dispolay) coordinates
+The  module is based on the ADS7843 module structure, but externalizes
+the function mapping the analog touch values to (dispolay) coordinates
 Current ADS7843 touch screen controller module has challenges with touch
 screen and display having different size, with touch screen having porches
 (overhanging the display), with alignment of touch screen and display,
@@ -38,7 +39,7 @@ measure, for example, battery power, and it has also a built-in
 temperature sensor. Any of these features are not yet taken advantage
 of, but could be nicely tapped into with extensions for this module.
 
-Usage:
+Usage
 
 Portrait format:
 
@@ -49,8 +50,8 @@ var touch = require("XPT2046").connect(
       if (x !== undefined) {
         console.log( x + " @ " + y);
       }
-    }, function(yR, xR, d, m) { // portrait 240 x 320
-        return [ // rawVal / valPerPx * offset
+    }, function(yR, xR, m) { // portrait 240 x 320
+        return [ //rawVal / valPerPx + offset
             Math.round(xR / -121.44  + 259.707) 
           , Math.round(yR /   88.904 + -19.781)
           , d, m
@@ -58,8 +59,8 @@ var touch = require("XPT2046").connect(
     }).listen();
 ```
 
-Swiping diagonally from top/left to bottom/right on a 240 x 320 portrait display 
-w/ touch screen creates output like this:
+Creates this output when swiping diagonally from top/left to
+bottom/right on a 240 x 320 portrait display w/ touch screen:
 
 ```
 24 @ 30
@@ -75,14 +76,14 @@ Landscape format:
 
 ```
       ...  
-      }, function(xR, yR, d, m) { // landscape 320 x 240
+      }, function(xR, yR, m) { // landscape 320 x 240
           return [ //rawVal / valPerPx + offset
               Math.round(xR /  -88.904 +  339.781)
             , Math.round(yR / -121.44  +  259.707) 
       ...
 ```
 
-Explained and with ```onInit()```:
+Explained and Coded within ```onInit()```:
 
 ```
 var touch, tMod = require("XPT2046");
@@ -92,9 +93,9 @@ function onInit() {
   // setup touchscreen 
   SPI1.setup({sck:A5, miso:A6, mosi:A7, baud: 2000000});
   touch = tMod.connect( // spi, cs, irq, callback, calc
-      SPI1, A3, A2, function(x, y, rd, m) { // landscape input
+      SPI1, A3, A2, function(x, y, m) { // landscape input
           if (x !== undefined) { console.log(x + " @ " + y); }
-      }, function(yR, xR, d, m) { // calc function (portraying, top/left=0/0)
+      }, function(yR, xR, m) { // calc function (portraying, top/left=0/0)
       // calc function converts raw x / y to x / y screen coordinates;
       // scale and offset values are calculated using markers
       // and default calc function - values below work well for
@@ -115,50 +116,39 @@ function onInit() {
  */
 
 exports = // XPT2046 module
-{ scan: 50 // default scan interval when touched to track move
-, calc: function(xRaw, yRaw, data, module) {  // default x / y
-      return [xRaw, yRaw, data, module];      // ...calculation...
-    }                                         // ... (pass thru)
+{ scan: 50 // default scan interval for tracking moving touch
+, calc: function(xRaw, yRaw, module) {  // default x / y calc...
+      return [xRaw, yRaw, module]; // ...is just a pass through
+    }
 , lstn: false // is listening to touch and untouch (calling back)
 , d: null // data as last read from XPT2046 touch controller
-, t: 0 // 0 = not touching/tracking, 1 = touch down, 2 = tracking
-, connect: function(spi, cs, irq, callback, calc, scan) {
-    // overwrite default 'calculation' (pass thru raw values)
-    if (calc) { this.calc = calc; }
-    // overwrite default scan interval (50) in milliseconds
-    if (scan) { this.scan = scan; }
-    // wake the controller up
-    spi.send([0x90,0],cs);
-    // look for a press
-    var watchFunction = function() {
+, t: 0 // 0 = not touching, 1 = touch down, 3 = scan / tracking move
+, x: 0 // last (t=0)/current(t>0) x touch
+, y: 0 // last (t=0)/current(t>0) y touch
+, connect: function(spi, cs, irq, callback, calc, scan, _, u) {
+    _ = _ || this; // _ and u force shortening of code (performance?)
+    if (calc) { _.calc = calc; } // overwrite default pass thru calc
+    if (scan) { _.scan = scan; } // overwrite default scan of 50 [mx]
+    spi.send([0x90,0],cs); // wake the controller up
+    var watch = function() { // look for a press
       var interval = setInterval(function () {
         if (!digitalRead(irq)) { // touch/ing
-          var d = this.d = spi.send([0x90,0,0xD0,0,0], cs);
-          this.t = (this.t) ? this.t |= 2 : 1;
-          if (this.lstn) {
-            callback.apply(
-                undefined
-              , this.calc(
-                    d[1]*256+d[2], d[3]*256+d[4]
-                  , this
-                  )
-              );
-          }
+          _.t = (_.t) ? _.t |= 2 : 1;
+          var d = _.d = spi.send([0x90,0,0xD0,0,0], cs),
+              c = _.calc(d[1]*256+d[2], d[3]*256+d[4], _);
+          _.x = c[0]; _.y = c[1];
+          if (_.lstn) { callback.apply(u, c); }
         } else { // 'untouch'
           clearInterval(interval);
-          this.t = 0;
-          interval = undefined;
-          if (this.lstn) {
-            callback(undefined, undefined, this);
-          }
-          setWatch(watchFunction, irq
-              , { repeat : false, edge: "falling" });
+          _.t = 0;
+          interval = u;
+          if (_.lstn) { callback(u, u, _); }
+          setWatch(watch, irq, { repeat : false, edge: "falling" });
         }
-      }.bind(this), this.scan);
-    }.bind(this);
-    setWatch(watchFunction, irq
-        , { repeat : false, edge: "falling" });
-    return this;
+      }.bind(_), _.scan);
+    }.bind(_);
+    setWatch(watch, irq, { repeat : false, edge: "falling" });
+    return _;
   }
 , listen:  function(lstn) {
     this.lstn = ((lstn === undefined) || lstn);
